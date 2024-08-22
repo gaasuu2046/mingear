@@ -1,0 +1,28 @@
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Gear {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  category    String
+  brand       String
+  img         String
+  reviews     Review[]
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  comment   String
+  gearId    Int
+  gear      Gear     @relation(fields: [gearId], references: [id])
+  createdAt DateTime @default(now())
+}
