@@ -49,13 +49,13 @@ export default async function GearList({ searchParams }: { searchParams: { limit
   
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl mt-6">
+      <h1 className="text-2xl mt-6">
         {limit ? `カテゴリー別おすすめギア` : 'カテゴリー別ギア一覧'}
       </h1>
       {Object.entries(displayedGearsByCategory).map(([category, gears]) => (
         <div key={category} className="space-y-4">
           <h2 className="text-2xl font-semibold mt-4">{category}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {gears.map((gear) => (
               <div key={gear.id} className="border ronded-lg p-4 shadow-md">
                 <h3 className="text-xl font-semibold mb-2">{gear.name}</h3>

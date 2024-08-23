@@ -24,17 +24,17 @@ export default function ReviewForm({ gearId }: { gearId: number }) {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6 max-w-md mx-auto">
-      <h3 className="text-xl font-semibold mb-4">レビューを投稿</h3>
+      <h3 className="text-xl font-semibold mb-4 text-black">レビューを投稿</h3>
       <div className="space-y-4">
         <div>
-          <label htmlFor="rating" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="rating" className="block text-sm font-medium text-gray-700 mb-1 text-black">
             評価
           </label>
           <select
             id="rating"
             value={rating}
             onChange={e => setRating(Number(e.target.value))}
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md text-black"
           >
             {[1, 2, 3, 4, 5].map(num => (
               <option key={num} value={num}>{num}</option>
@@ -50,7 +50,7 @@ export default function ReviewForm({ gearId }: { gearId: number }) {
             value={comment}
             onChange={e => setComment(e.target.value)}
             rows={3}
-            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md text-black"
             placeholder="あなたの感想を書いてください..."
           />
         </div>
