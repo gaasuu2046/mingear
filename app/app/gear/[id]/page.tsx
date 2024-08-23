@@ -43,7 +43,7 @@ export default async function GearDetail({ params }: { params: { id: string } })
 
           {/* 商品情報 */}
           <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">{gear.name}</h1>
+            <h1 className="text-3xl tracking-tight text-gray-900">{gear.name}</h1>
             <div className="mt-3">
               <h2 className="sr-only">商品情報</h2>
               <p className="text-lg text-gray-900">ブランド: {gear.brand}</p>
@@ -69,7 +69,7 @@ export default async function GearDetail({ params }: { params: { id: string } })
 
         {/* レビューセクション */}
         <section aria-labelledby="reviews-heading" className="mt-16 lg:mt-24">
-          <h2 id="reviews-heading" className="text-2xl font-bold tracking-tight text-gray-900">レビュー</h2>
+          <h2 id="reviews-heading" className="text-2xl tracking-tight text-gray-900">レビュー</h2>
 
           <div className="mt-8 divide-y divide-gray-200">
             {gear.reviews.map((review) => (

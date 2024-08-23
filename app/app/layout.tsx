@@ -1,12 +1,14 @@
 // app/layout.tsx
-import { Inter } from 'next/font/google'
+import { Noto_Sans_JP } from 'next/font/google'
 import Link from 'next/link'
 import { FaHome, FaList, FaStar, FaPlusCircle } from 'react-icons/fa'
 
 import type { Metadata } from 'next'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Noto_Sans_JP({
+  subsets: ['latin']
+})
 
 export const metadata: Metadata = {
   title: 'ウルトラライト！',
@@ -24,7 +26,7 @@ export default function RootLayout({
         <header className="bg-gray-800 shadow-lg">
           <nav className="container mx-auto px-4 py-3">
             <div className="flex flex-col sm:flex-row justify-between items-center">
-              <h1 className="text-2xl font-bold mb-4 sm:mb-0 text-green-400">ULギアレビュー</h1>
+              <h1 className="text-2xl mb-4 sm:mb-0 text-green-400">Rate Your Own Gear!</h1>
               <ul className="flex space-x-1 sm:space-x-4">
                 <NavItem href="/" icon={<FaHome />} text="ホーム" />
                 <NavItem href="/gear" icon={<FaList />} text="ギア一覧" />

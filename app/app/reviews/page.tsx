@@ -19,7 +19,7 @@ const reviews = await getReviewList();
 export default function ReviewList() {
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold">最新のレビュー</h1>
+      <h1 className="text-3xl">最新のレビュー</h1>
       <div className="space-y-6">
         {reviews.map((review) => (
           <div key={review.id} className="border rounded-lg p-4 shadow-md">
