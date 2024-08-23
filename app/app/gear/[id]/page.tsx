@@ -1,6 +1,7 @@
 // app/gear/[id]/page.tsx
 import { StarIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import ReviewForm from '@/components/ReviewForm'
@@ -46,10 +47,16 @@ export default async function GearDetail({ params }: { params: { id: string } })
             <div className="mt-3">
               <h2 className="sr-only">商品情報</h2>
               <p className="text-lg text-gray-900">ブランド: {gear.brand}</p>
+              <p className="text-gray-600 mb-2">{gear.price}円</p>
             </div>
             <div className="mt-6">
               <h3 className="sr-only">説明</h3>
               <p className="text-base text-gray-500">{gear.description}</p>
+            </div>
+            <div className="mt-6">
+            <Link href={gear.productUrl || '#'} className="text-blue-500 hover:underline">
+              購入
+            </Link>
             </div>
             <div className="mt-6 flex items-center">
               <StarIcon className="text-yellow-400 h-5 w-5 flex-shrink-0" aria-hidden="true" />

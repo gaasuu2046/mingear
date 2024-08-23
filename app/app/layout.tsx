@@ -1,10 +1,13 @@
 // app/layout.tsx
-import { Inter } from 'next/font/google'
+import { Inconsolata } from 'next/font/google'
 import Link from 'next/link'
+
 import type { Metadata } from 'next'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inconsolata({
+  subsets: ['latin']
+})
 
 export const metadata: Metadata = {
   title: 'ULギアレビューサイト',

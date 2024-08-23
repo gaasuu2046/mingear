@@ -9,14 +9,6 @@ async function getGearList() {
   if (!gearList) notFound()
   return gearList
 }
-// const gears = [
-//   { id: 1, name: 'テント', brand: 'アウトドアブランドA', rating: 4.5 },
-//   { id: 2, name: '寝袋', brand: 'アウトドアブランドB', rating: 4.2 },
-//   { id: 3, name: 'バックパック', brand: 'アウトドアブランドC', rating: 4.8 },
-//   { id: 4, name: 'トレッキングポール', brand: 'アウトドアブランドD', rating: 4.3 },
-//   { id: 5, name: 'UL靴', brand: 'アウトドアブランドE', rating: 4.6 },
-//   { id: 6, name: 'ヘッドランプ', brand: 'アウトドアブランドF', rating: 4.1 },
-// 
 const gears = await getGearList();
 
 export default function GearList() {
@@ -29,6 +21,7 @@ export default function GearList() {
             <h2 className="text-xl font-semibold mb-2">{gear.name}</h2>
             <img src={gear.img} alt={gear.name} className="h-48 w-full object-cover object-center mb-2" />
             <p className="text-gray-600 mb-2">{gear.category}</p>
+            <p className="text-gray-600 mb-2">{gear.price}円</p>
             {/* <p className="text-yellow-500 mb-2">{'★'.repeat(Math.round(gear.rating))}{'☆'.repeat(5 - Math.round(gear.rating))}</p> */}
             <Link href={`/gear/${gear.id}`} className="text-blue-500 hover:underline">
               詳細を見る
