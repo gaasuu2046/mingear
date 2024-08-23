@@ -60,7 +60,7 @@ export default async function GearList({ limit }: { limit?: number }) {
                 <p className="text-gray-600 mb-2">{gear.price}円</p>
                 <div className="flex items-center">
                   <StarIcon className="h-5 w-5 text-yellow-400" />
-                  <p className="text-gray-600">{gear.reviews.length > 0 ? gear.reviews.reduce((sum, review) => sum + review.rating, 0) / gear.reviews.length : 0}</p>
+                  <p className="text-gray-600">{gear.reviews.length > 0 ? (gear.reviews.reduce((sum, review) => sum + review.rating, 0) / gear.reviews.length).toFixed(2) : 0}</p>
                 </div>
                 <Link href={`/gear/${gear.id}`} className="text-blue-500 hover:underline">
                   詳細を見る
