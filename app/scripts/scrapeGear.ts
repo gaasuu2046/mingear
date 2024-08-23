@@ -50,17 +50,32 @@ const prisma = new PrismaClient()
 //     process.exit(1)
 //   })
 
-const tentPageUrl = 'https://moonlight-gear.com/collections/topcat-tenttarp/topcat-tenttarp'
-scrapeTentGear(tentPageUrl)
+const pages = [
+  // { 
+  //   'category': 'テント',
+  //   'url': 'https://moonlight-gear.com/collections/topcat-tenttarp/topcat-tenttarp'
+  // },
+  { 
+    'category': 'バックパック',
+    'url': 'https://moonlight-gear.com/collections/topcat-backpack'
+  },
+  { 
+    'category': 'スリーピングアイテム',
+    'url': 'https://moonlight-gear.com/collections/topcat-sleeping/topcat-sleeping'
+  },
+]
+
+for (const { category, url } of pages) {
+  scrapeGear(category,url)
   .then(() => prisma.$disconnect())
   .catch(async (e) => {
     console.error(e)
     await prisma.$disconnect()
     process.exit(1)
   })
-
+}
   
-  async function scrapeTentGear(url: string) {
+  async function scrapeGear(category: string, url: string) {
     try {
       const response = await axios.get(url)
       const $ = cheerio.load(response.data)
@@ -84,7 +99,7 @@ scrapeTentGear(tentPageUrl)
             price: parseInt(price),
             img: imageUrl ? `https:${imageUrl}` : '',
             productUrl: productUrl ? productUrl : '',
-            category: 'テント',
+            category: category,
             brand: brand,
           },
         })
