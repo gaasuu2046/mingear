@@ -51,10 +51,10 @@ const prisma = new PrismaClient()
 //   })
 
 const pages = [
-  // { 
-  //   'category': 'テント',
-  //   'url': 'https://moonlight-gear.com/collections/topcat-tenttarp/topcat-tenttarp'
-  // },
+  { 
+    'category': 'テント',
+    'url': 'https://moonlight-gear.com/collections/topcat-tenttarp/topcat-tenttarp'
+  },
   { 
     'category': 'バックパック',
     'url': 'https://moonlight-gear.com/collections/topcat-backpack'
