@@ -2,6 +2,7 @@
 import { Inconsolata } from 'next/font/google'
 import Link from 'next/link'
 
+
 import type { Metadata } from 'next'
 import './globals.css'
 
@@ -28,6 +29,7 @@ export default function RootLayout({
               <h1 className="text-2xl font-bold mb-4 sm:mb-0">ULギアレビュー</h1>
               <ul className="flex space-x-4">
                 <li><Link href="/" className="hover:underline">ホーム</Link></li>
+                <li><Link href="/gear/register" className="hover:underline">ギア登録</Link></li>
                 <li><Link href="/gear" className="hover:underline">ギア一覧</Link></li>
                 <li><Link href="/reviews" className="hover:underline">レビュー</Link></li>
               </ul>

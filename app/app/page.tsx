@@ -1,11 +1,10 @@
 // app/page.tsx
-import GearList from '@/components/GearList'
+import GearList from '@/app/gear/page'
 
 export default function Home() {
   return (
     <div>
-      <h1>ULギアレビュー</h1>
-      <GearList />
+      <GearList limit={12}/>
     </div>
   )
 }
