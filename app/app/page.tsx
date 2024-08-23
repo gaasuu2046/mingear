@@ -4,7 +4,9 @@ import GearList from '@/app/gear/page'
 export default function Home() {
   return (
     <div>
-      <GearList limit={12}/>
+      <GearList searchParams={{
+        limit: "3"
+      }} />
     </div>
   )
 }

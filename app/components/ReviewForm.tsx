@@ -49,7 +49,7 @@ export default function ReviewForm({ gearId }: { gearId: number }) {
             id="comment"
             value={comment}
             onChange={e => setComment(e.target.value)}
-            rows="3"
+            rows={3}
             className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
             placeholder="あなたの感想を書いてください..."
           />

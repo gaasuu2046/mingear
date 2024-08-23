@@ -19,8 +19,10 @@ async function getGearList() {
 type GearWithReviews = Gear & {
   reviews: Review[];
 };
-export default async function GearList({ limit }: { limit?: number }) {
+
+export default async function GearList({ searchParams }: { searchParams: { limit?: string } }) {
   const gears = await getGearList();
+  const limit = searchParams.limit ? parseInt(searchParams.limit, 10) : undefined;
 
   // ratingでソート
   const sortGearsByRating = (gears: GearWithReviews[]) => {
@@ -29,6 +31,7 @@ export default async function GearList({ limit }: { limit?: number }) {
       averageRating: gear.reviews.length > 0 ? gear.reviews.reduce((sum, review) => sum + review.rating, 0) / gear.reviews.length : 0
     })).sort((a, b) => b.averageRating - a.averageRating);
   };
+
   // ギアをカテゴリーごとにグループ化
   const gearsByCategory = sortGearsByRating(gears).reduce((acc, gear) => {
     if (!acc[gear.category]) {
@@ -54,7 +57,7 @@ export default async function GearList({ limit }: { limit?: number }) {
           <h2 className="text-2xl font-semibold mt-4">{category}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {gears.map((gear) => (
-              <div key={gear.id} className="border rounded-lg p-4 shadow-md">
+              <div key={gear.id} className="border ronded-lg p-4 shadow-md">
                 <h3 className="text-xl font-semibold mb-2">{gear.name}</h3>
                 <img src={gear.img} alt={gear.name} className="h-48 w-full object-cover object-center mb-2" />
                 <p className="text-gray-600 mb-2">{gear.price}円</p>
