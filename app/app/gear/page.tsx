@@ -1,5 +1,6 @@
 // app/gear/page.tsx
 import { StarIcon } from '@heroicons/react/20/solid'
+import { Gear, Review } from '@prisma/client';
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -15,11 +16,14 @@ async function getGearList() {
   return gearList
 }
 
+type GearWithReviews = Gear & {
+  reviews: Review[];
+};
 export default async function GearList({ limit }: { limit?: number }) {
   const gears = await getGearList();
 
   // ratingでソート
-  const sortGearsByRating = (gears) => {
+  const sortGearsByRating = (gears: GearWithReviews[]) => {
     return gears.map(gear => ({
       ...gear,
       averageRating: gear.reviews.length > 0 ? gear.reviews.reduce((sum, review) => sum + review.rating, 0) / gear.reviews.length : 0
