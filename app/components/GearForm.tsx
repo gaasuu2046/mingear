@@ -14,6 +14,8 @@ export default function GearForm() {
   const [brand, setBrand] = useState('');
   const [img, setImg] = useState('');
   const [price, setPrice] = useState('');
+  const [weight, setWeight] = useState('');
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // フォームのデフォルト送信を防ぐ
@@ -28,7 +30,8 @@ export default function GearForm() {
         category, 
         brand, 
         img, 
-        price: parseInt(price, 10) 
+        price: parseInt(price, 10),
+        weight: parseInt(weight, 10)
       }),
     });
     if (response.ok)  {
@@ -38,6 +41,7 @@ export default function GearForm() {
       setBrand('');
       setImg('');
       setPrice('');
+      setWeight('');
       router.push(`${baseUrl}/gear`);
       return; 
     } else {
@@ -105,6 +109,17 @@ export default function GearForm() {
           step="1"
         />
 
+        <FormField
+          label="重量 (g)"
+          id="weight"
+          type="number"
+          value={weight}
+          onChange={(e) => setWeight(e.target.value)}
+          required
+          min="0"
+          step="1"
+        />
+        
         <button 
           type="submit"
           className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"

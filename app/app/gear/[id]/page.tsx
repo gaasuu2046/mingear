@@ -55,7 +55,7 @@ export default async function GearDetail({ params }: { params: { id: string } })
             </div>
             <div className="mt-6">
             <Link href={gear.productUrl || '#'} className="text-blue-500 hover:underline">
-              購入
+              こちらで購入できます
             </Link>
             </div>
             <div className="mt-6 flex items-center">

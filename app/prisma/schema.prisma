@@ -11,13 +11,14 @@ generator client {
 
 model Gear {
   id          Int      @id @default(autoincrement())
-  name        String
+  name        String   @unique
   description String
   category    String
   brand       String
   img         String
   price       Int?
   productUrl  String?
+  weight      Int
   reviews     Review[]
 }
 
