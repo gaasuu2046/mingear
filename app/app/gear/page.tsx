@@ -43,7 +43,7 @@ export default async function GearList({ searchParams }: {
     category?: string;
   } 
 }) {
-  const { limit, search, category } = searchParams;
+  const { limit, search } = searchParams;
   const gears = await getGearList({ search });
   // const limit = searchParams.limit ? parseInt(searchParams.limit, 10) : undefined;
 

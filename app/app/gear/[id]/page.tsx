@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+import AddToPackingListButton from '@/components/AddToPackingListButton'
 import ReviewForm from '@/components/ReviewForm'
 import prisma from '@/lib/prisma'
 
@@ -52,6 +53,9 @@ export default async function GearDetail({ params }: { params: { id: string } })
             <div className="mt-6">
               <h3 className="sr-only">説明</h3>
               <p className="text-base text-gray-500">{gear.description}</p>
+            </div>
+            <div className="mt-6">
+              <AddToPackingListButton gearId={gear.id} />
             </div>
             <div className="mt-6">
             <Link href={gear.productUrl || '#'} className="text-blue-500 hover:underline">
