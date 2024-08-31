@@ -1,11 +1,14 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import bcrypt from "bcrypt"
-import NextAuth, { AuthOptions } from "next-auth"
+import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
+import GoogleProvider from "next-auth/providers/google"
+
+import type { NextAuthOptions } from "next-auth"
 
 import prisma from "@/lib/prisma"
 
-export const authOptions: AuthOptions = {
+export const authOptions: NextAuthOptions  = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
@@ -35,9 +38,25 @@ export const authOptions: AuthOptions = {
         }
       }
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!
+    })
+    // EmailProvider({
+    //   server: {
+    //     host: process.env.EMAIL_SERVER_HOST,
+    //     port: process.env.EMAIL_SERVER_PORT,
+    //     auth: {
+    //       user: process.env.EMAIL_SERVER_USER,
+    //       pass: process.env.EMAIL_SERVER_PASSWORD
+    //     }
+    //   },
+    //   from: process.env.EMAIL_FROM
+    // }),
   ],
   pages: {
     signIn: '/auth/signin',
+    verifyRequest: '/auth/verify-request', // メール検証リクエストページ
   },
   callbacks: {
     async jwt({ token, user }) {

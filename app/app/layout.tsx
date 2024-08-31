@@ -1,8 +1,11 @@
 // app/layout.tsx
 import { Noto_Sans_JP } from 'next/font/google'
 import Link from 'next/link'
+import { Session } from "next-auth"
 import { getServerSession } from "next-auth/next"
-import { FaHome, FaList, FaStar, FaPlusCircle } from 'react-icons/fa'
+import { FaHome, FaList, FaStar, FaPlusCircle, FaSignOutAlt, FaSignInAlt } from 'react-icons/fa'
+
+
 
 
 
@@ -30,7 +33,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions) as Session | null
   return (
     <html lang="ja" className="h-full">
       <body className={`${inter.className} flex flex-col min-h-screen bg-gray-900 text-gray-100`}>
@@ -43,8 +46,11 @@ export default async function RootLayout({
                   <NavItem href="/" icon={<FaHome />} text="ホーム" />
                   <NavItem href="/gear" icon={<FaList />} text="ギア一覧" />
                   <NavItem href="/reviews" icon={<FaStar />} text="レビュー" />
-                  <NavItem href="/gear/register" icon={<FaPlusCircle />} text="ギア登録" />
                   <NavItem href="/my-packing-list" icon={<FaList />} text="マイパッキングリスト" />
+                  {session && <><NavItem href="/auth/profile" icon={<FaList />} text="プロフィール" /><NavItem href="/api/auth/signout" icon={<FaSignOutAlt />} text="ログアウト" /></>
+                  }
+                  {!session && <NavItem href="/auth/signin" icon={<FaSignInAlt />} text="ログイン" />}
+                  <NavItem href="/gear/register" icon={<FaPlusCircle />} text="ギア登録" />
                 </ul>
                 <UserInfo session={session} />
               </div>

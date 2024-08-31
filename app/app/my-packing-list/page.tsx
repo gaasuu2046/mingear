@@ -1,5 +1,8 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { getServerSession } from 'next-auth/next'
+
+import DeleteButton from './DeleteButton'
 
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import RefreshOnRedirect from '@/components/RefreshOnRedirect'
@@ -16,7 +19,21 @@ async function getPackingList(userId: string) {
 export default async function MyPackingList() {
   const session = await getServerSession(authOptions)
   if (!session || !session.user) {
-    return <div>Please log in to view your packing list.</div>
+    // /api/auth/signin にリダイレクト
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-black">
+        <div className="text-center p-8 bg-white shadow-md rounded-lg">
+          <h1 className="text-2xl font-bold mb-4">ログインが必要です</h1>
+          <p className="mb-6">パッキングリストを表示するにはログインしてください。</p>
+          <Link 
+            href="/auth/signin" 
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+          >
+            ログインページへ
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   const packingList = await getPackingList(session.user.id)
@@ -38,6 +55,7 @@ export default async function MyPackingList() {
             />
             <h2 className="text-xl font-semibold">{item.gear.name}</h2>
             <p className="text-gray-600">重量: {item.gear.weight}g</p>
+            <DeleteButton gearId={item.id} />
           </div>
         ))}
       </div>

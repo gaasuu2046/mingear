@@ -43,3 +43,22 @@ export async function GET() {
     return NextResponse.json({ error: 'Failed to fetch packing list' }, { status: 500 })
   }
 }
+
+export async function DELETE(request: Request) {
+  const session = await getServerSession(authOptions)
+  if (!session || !session.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const { gearId } = await request.json()
+  console.log('gearId', gearId)
+
+  try {
+    await prisma.packingList.delete({
+      where: { id: gearId },
+    })
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to remove from packing list' }, { status: 500 })
+  }
+}
