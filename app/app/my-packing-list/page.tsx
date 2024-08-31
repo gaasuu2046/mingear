@@ -60,7 +60,7 @@ export default async function MyPackingList() {
           </div>
         ))}
       </div>
-      <div className="mt-8 text-xl font-semibold text-black">
+      <div className="mt-8 text-xl font-semibold text-white">
         総重量: {totalWeight}g
       </div>
     </div>
