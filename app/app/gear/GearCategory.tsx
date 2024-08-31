@@ -1,10 +1,10 @@
 // app/gear/GearCategory.tsx
 'use client'
 
-import { useState } from 'react';
 import { StarIcon } from '@heroicons/react/20/solid'
-import Link from 'next/link'
 import { Gear, Review } from '@prisma/client';
+import Link from 'next/link'
+import { useState } from 'react';
 
 type GearWithReviews = Gear & {
   reviews: Review[];

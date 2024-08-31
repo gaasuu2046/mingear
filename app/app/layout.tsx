@@ -5,16 +5,11 @@ import { Session } from "next-auth"
 import { getServerSession } from "next-auth/next"
 import { FaHome, FaList, FaStar, FaPlusCircle, FaSignOutAlt, FaSignInAlt } from 'react-icons/fa'
 
-
-
-
-
-import { authOptions } from "./api/auth/[...nextauth]/route"
-
 import type { Metadata } from 'next'
 
 import { Providers } from '@/components/Providers'
 import UserInfo from '@/components/UserInfo'
+import {authOptions} from "@/lib/auth"
 
 
 import './globals.css'

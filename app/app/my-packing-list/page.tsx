@@ -1,11 +1,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { Session } from "next-auth"
 import { getServerSession } from 'next-auth/next'
 
 import DeleteButton from './DeleteButton'
 
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import RefreshOnRedirect from '@/components/RefreshOnRedirect'
+import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 
 async function getPackingList(userId: string) {
@@ -17,7 +18,7 @@ async function getPackingList(userId: string) {
 }
 
 export default async function MyPackingList() {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions) as Session | null
   if (!session || !session.user) {
     // /api/auth/signin にリダイレクト
     return (

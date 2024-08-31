@@ -34,10 +34,10 @@ export default function VerifyRequest() {
             Click the link in the email to sign in or sign up.
           </p>
           <p className="mb-4">
-            If you don't see the email, check other places it might be, like your junk, spam, social, or other folders.
+            If you dont see the email, check other places it might be, like your junk, spam, social, or other folders.
           </p>
           <p>
-            You will be redirected to the home page in 5 minutes if you don't verify your email.
+            You will be redirected to the home page in 5 minutes if you dont verify your email.
           </p>
         </div>
       </main>

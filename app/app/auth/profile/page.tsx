@@ -1,13 +1,14 @@
 // app/auth/profile/page.tsx
 
+import { Session } from "next-auth"
 import { getServerSession } from 'next-auth/next'
 
 import DeleteAccountButton from '../components/DeleteAccountButton'
 
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth'
 
 export default async function ProfilePage() {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions) as Session | null
 
   if (!session || !session.user) {
     return <div>Please log in to view your profile.</div>
