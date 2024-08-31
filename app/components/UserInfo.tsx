@@ -1,7 +1,6 @@
 import { Session } from "next-auth"
 
 export default function UserInfo({ session }: { session: Session | null }) {
-  console.log(session)
   if (!session) {
     return null
   }

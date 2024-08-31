@@ -3,6 +3,7 @@
 
 import { StarIcon } from '@heroicons/react/20/solid'
 import { Gear, Review } from '@prisma/client';
+import Image from 'next/image';
 import Link from 'next/link'
 import { useState } from 'react';
 
@@ -12,16 +13,24 @@ type GearWithReviews = Gear & {
 
 export default function GearCategory({ category, gears }: { category: string, gears: GearWithReviews[] }) {
   const [showAll, setShowAll] = useState(false);
-  const displayedGears = showAll ? gears : gears.slice(0, 3);
+  const displayedGears = showAll ? gears : gears.slice(0, 4);
 
   return (
     <div id={category} className="space-y-4">
       <h2 className="text-2xl font-semibold mt-4">{category}</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
         {displayedGears.map((gear) => (
           <div key={gear.id} className="border rounded-lg p-4 shadow-md">
             <h3 className="text-xl font-semibold mb-2">{gear.name}</h3>
-            <img src={gear.img} alt={gear.name} className="h-48 w-full object-cover object-center mb-2" />
+            <div className="relative w-full h-48 mb-2">
+            <Image 
+                src={gear.img} 
+                alt={gear.name} 
+                layout="fill"
+                objectFit="cover"
+                objectPosition="center"
+              />
+            </div>
             <p className="text-gray-100 mb-2">{gear.price}円</p>
             <p className="text-gray-100 mb-2">{gear.weight}g</p>
             <div className="flex items-center">
@@ -38,7 +47,7 @@ export default function GearCategory({ category, gears }: { category: string, ge
           </div>
         ))}
       </div>
-      {gears.length > 3 && (
+      {gears.length > 4 && (
         <button
           onClick={() => setShowAll(!showAll)}
           className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
