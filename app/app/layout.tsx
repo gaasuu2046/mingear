@@ -3,7 +3,7 @@ import { Noto_Sans_JP } from 'next/font/google'
 import Link from 'next/link'
 import { Session } from "next-auth"
 import { getServerSession } from "next-auth/next"
-import { FaHome, FaList, FaStar, FaPlusCircle, FaSignOutAlt, FaSignInAlt } from 'react-icons/fa'
+import { FaList, FaStar, FaPlusCircle, FaSignOutAlt, FaSignInAlt } from 'react-icons/fa'
 
 import type { Metadata } from 'next'
 
@@ -38,8 +38,8 @@ export default async function RootLayout({
               <div className="flex flex-col sm:flex-row justify-between items-center">
                 <h1 className="text-2xl mb-4 sm:mb-0 text-green-400">Rate Your Own Gear!</h1>
                 <ul className="flex space-x-1 sm:space-x-4">
-                  <NavItem href="/" icon={<FaHome />} text="ホーム" />
-                  <NavItem href="/gear" icon={<FaList />} text="ギア一覧" />
+                  <NavItem href="/" icon={<FaList />} text="ギア一覧" />
+                  {/* <NavItem href="/gear" icon={<FaList />} text="ギア一覧" /> */}
                   <NavItem href="/reviews" icon={<FaStar />} text="レビュー" />
                   <NavItem href="/my-packing-list" icon={<FaList />} text="マイパッキングリスト" />
                   {session && <><NavItem href="/auth/profile" icon={<FaList />} text="プロフィール" /><NavItem href="/api/auth/signout" icon={<FaSignOutAlt />} text="ログアウト" /></>
