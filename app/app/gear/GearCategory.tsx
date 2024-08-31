@@ -22,11 +22,11 @@ export default function GearCategory({ category, gears }: { category: string, ge
           <div key={gear.id} className="border rounded-lg p-4 shadow-md">
             <h3 className="text-xl font-semibold mb-2">{gear.name}</h3>
             <img src={gear.img} alt={gear.name} className="h-48 w-full object-cover object-center mb-2" />
-            <p className="text-gray-600 mb-2">{gear.price}円</p>
-            <p className="text-gray-600 mb-2">{gear.weight}g</p>
+            <p className="text-gray-100 mb-2">{gear.price}円</p>
+            <p className="text-gray-100 mb-2">{gear.weight}g</p>
             <div className="flex items-center">
               <StarIcon className="h-5 w-5 text-yellow-400" />
-              <p className="text-gray-600">
+              <p className="text-gray-100">
                 {gear.reviews.length > 0
                   ? (gear.reviews.reduce((sum, review) => sum + review.rating, 0) / gear.reviews.length).toFixed(2)
                   : '0'}

@@ -22,7 +22,7 @@ export default async function MyPackingList() {
   if (!session || !session.user) {
     // /api/auth/signin にリダイレクト
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-black">
+      <div className="flex flex-col items-center justify-center min-h-screen text-black">
         <div className="text-center p-8 bg-white shadow-md rounded-lg">
           <h1 className="text-2xl font-bold mb-4">ログインが必要です</h1>
           <p className="mb-6">パッキングリストを表示するにはログインしてください。</p>
