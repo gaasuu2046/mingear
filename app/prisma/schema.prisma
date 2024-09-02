@@ -87,6 +87,8 @@ model Gear {
   weight      Int
   reviews     Review[]
   packingLists PackingList[]
+  avgRating   Float?   @default(0)
+  reviewCount Int      @default(0)
 }
 
 model Review {

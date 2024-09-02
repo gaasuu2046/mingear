@@ -2,13 +2,12 @@
 'use client'
 
 import { StarIcon } from '@heroicons/react/20/solid'
-import { Gear, Review, Category, Brand } from '@prisma/client';
+import { Gear, Category, Brand } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation';
 
 type GearWithReviewsAndRelations = Gear & {
-  reviews: Review[];
   category: Category;
   brand: Brand;
 };
@@ -54,9 +53,7 @@ export default function GearCategory({
             <div className="flex items-center">
               <StarIcon className="h-5 w-5 text-yellow-400" />
               <p className="text-gray-700">
-                {gear.reviews.length > 0
-                  ? (gear.reviews.reduce((sum, review) => sum + review.rating, 0) / gear.reviews.length).toFixed(2)
-                  : '0'}
+                {gear.avgRating?.toFixed(2) ?? '0'}
               </p>
             </div>
             <Link href={`/gear/${gear.id}`} className="text-blue-500 hover:underline">

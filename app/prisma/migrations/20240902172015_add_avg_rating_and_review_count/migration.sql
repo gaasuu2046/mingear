@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Gear" ADD COLUMN     "avgRating" DOUBLE PRECISION DEFAULT 0,
+ADD COLUMN     "reviewCount" INTEGER NOT NULL DEFAULT 0;

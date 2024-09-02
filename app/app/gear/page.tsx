@@ -1,4 +1,3 @@
-// app/gear/page.tsx
 import { Prisma } from '@prisma/client';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
@@ -8,8 +7,6 @@ import GearCategory from './GearCategory';
 
 import SearchForm from '@/components/SearchForm';
 import prisma from '@/lib/prisma'
-
-
 
 async function getGearList(searchParams: {
   search?: string;
@@ -38,16 +35,13 @@ async function getGearList(searchParams: {
   const gears = await prisma.gear.findMany({
     where,
     include: {
-      reviews: true,
       category: true,
       brand: true
     },
     take: pageSize,
     skip: (pageNumber - 1) * pageSize,
     orderBy: {
-      reviews: {
-        _count: 'desc'
-      }
+      avgRating: 'desc'
     }
   });
 

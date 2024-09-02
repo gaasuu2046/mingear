@@ -1,4 +1,3 @@
-// app/gear/[id]/page.tsx
 import { StarIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -23,9 +22,6 @@ function classNames(...classes: string[]) {
 
 export default async function GearDetail({ params }: { params: { id: string } }) {
   const gear = await getGear(params.id)
-  const averageRating = gear.reviews.length > 0
-    ? (gear.reviews.reduce((acc, review) => acc + review.rating, 0) / gear.reviews.length).toFixed(2)
-    : 0
 
   return (
     <div className="bg-white">
@@ -65,7 +61,7 @@ export default async function GearDetail({ params }: { params: { id: string } })
             <div className="mt-6 flex items-center">
               <StarIcon className="text-yellow-400 h-5 w-5 flex-shrink-0" aria-hidden="true" />
               <p className="ml-2 text-sm text-gray-500">
-                {averageRating} out of 5 stars ({gear.reviews.length} reviews)
+                {gear.avgRating?.toFixed(2) || '0.00'} out of 5 stars ({gear.reviewCount} reviews)
               </p>
             </div>
           </div>
