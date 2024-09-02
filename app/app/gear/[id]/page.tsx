@@ -11,7 +11,7 @@ import prisma from '@/lib/prisma'
 async function getGear(id: string) {
   const gear = await prisma.gear.findUnique({
     where: { id: parseInt(id) },
-    include: { reviews: true },
+    include: { reviews: true, brand: true },
   })
   if (!gear) notFound()
   return gear
@@ -47,7 +47,7 @@ export default async function GearDetail({ params }: { params: { id: string } })
             <h1 className="text-3xl tracking-tight text-gray-900">{gear.name}</h1>
             <div className="mt-3">
               <h2 className="sr-only">商品情報</h2>
-              <p className="text-lg text-gray-900">ブランド: {gear.brand}</p>
+              <p className="text-lg text-gray-900">ブランド: {gear.brand.name}</p>
               <p className="text-gray-600 mb-2">{gear.price}円</p>
             </div>
             <div className="mt-6">

@@ -60,12 +60,27 @@ model PackingList {
   gear      Gear     @relation(fields: [gearId], references: [id])
   createdAt DateTime @default(now())
 }
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  gears Gear[]
+}
+
+model Brand {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  gears Gear[]
+}
+
 model Gear {
   id          Int      @id @default(autoincrement())
   name        String   @unique
   description String
-  category    String
-  brand       String
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+  brandId     Int
+  brand       Brand    @relation(fields: [brandId], references: [id])
   img         String
   price       Int?
   productUrl  String?
@@ -81,4 +96,10 @@ model Review {
   gearId    Int
   gear      Gear     @relation(fields: [gearId], references: [id])
   createdAt DateTime @default(now())
+}
+
+model CacheEntry {
+  key       String   @id
+  value     String   @db.Text
+  expiresAt DateTime
 }

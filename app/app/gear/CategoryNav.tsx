@@ -1,26 +1,41 @@
 // app/gear/CategoryNav.tsx
 'use client'
 
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useCallback } from 'react';
 
-export default function CategoryNav({ categories }: { categories: string[] }) {
-  const [activeCategory, setActiveCategory] = useState(categories[0]);
+export default function CategoryNav({ categories, selectedCategory }: { categories: string[], selectedCategory: string }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+      params.delete('page'); // Reset page when changing category
+      return params.toString();
+    },
+    [searchParams]
+  );
+
+  const handleCategoryClick = (category: string) => {
+    router.push('/gear?' + createQueryString('category', category));
+  };
 
   return (
     <nav className="flex flex-wrap gap-2 mb-4">
       {categories.map((category) => (
-        <a
+        <button
           key={category}
-          href={`#${category}`}
           className={`px-3 py-2 rounded-full ${
-            activeCategory === category
+            selectedCategory === category
               ? 'bg-blue-500 text-white'
               : 'bg-gray-200 text-gray-700'
           }`}
-          onClick={() => setActiveCategory(category)}
+          onClick={() => handleCategoryClick(category)}
         >
           {category}
-        </a>
+        </button>
       ))}
     </nav>
   );

@@ -2,24 +2,42 @@
 'use client'
 
 import { StarIcon } from '@heroicons/react/20/solid'
-import { Gear, Review } from '@prisma/client';
+import { Gear, Review, Category, Brand } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link'
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-type GearWithReviews = Gear & {
+type GearWithReviewsAndRelations = Gear & {
   reviews: Review[];
+  category: Category;
+  brand: Brand;
 };
 
-export default function GearCategory({ category, gears }: { category: string, gears: GearWithReviews[] }) {
-  const [showAll, setShowAll] = useState(false);
-  const displayedGears = showAll ? gears : gears.slice(0, 4);
+export default function GearCategory({ 
+  category, 
+  gears, 
+  pageNumber, 
+  totalPages 
+}: { 
+  category: string, 
+  gears: GearWithReviewsAndRelations[], 
+  pageNumber: number,
+  totalPages: number
+}) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', newPage.toString());
+    router.push(`/gear?${params.toString()}`);
+  };
 
   return (
     <div id={category} className="space-y-4">
       <h2 className="text-2xl font-semibold mt-4">{category}</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-        {displayedGears.map((gear) => (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {gears.map((gear) => (
           <div key={gear.id} className="border rounded-lg p-4 shadow-md">
             <h3 className="text-xl font-semibold mb-2">{gear.name}</h3>
             <div className="relative w-full h-48 mb-2">
@@ -31,11 +49,11 @@ export default function GearCategory({ category, gears }: { category: string, ge
                 objectPosition="center"
               />
             </div>
-            <p className="text-gray-100 mb-2">{gear.price}円</p>
-            <p className="text-gray-100 mb-2">{gear.weight}g</p>
+            <p className="text-gray-700 mb-2">{gear.price}円</p>
+            <p className="text-gray-700 mb-2">{gear.weight}g</p>
             <div className="flex items-center">
               <StarIcon className="h-5 w-5 text-yellow-400" />
-              <p className="text-gray-100">
+              <p className="text-gray-700">
                 {gear.reviews.length > 0
                   ? (gear.reviews.reduce((sum, review) => sum + review.rating, 0) / gear.reviews.length).toFixed(2)
                   : '0'}
@@ -47,14 +65,18 @@ export default function GearCategory({ category, gears }: { category: string, ge
           </div>
         ))}
       </div>
-      {gears.length > 4 && (
-        <button
-          onClick={() => setShowAll(!showAll)}
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
-        >
-          {showAll ? '閉じる' : 'もっと見る'}
-        </button>
-      )}
+      <div className="flex justify-center space-x-2 mt-4">
+        {pageNumber > 1 && (
+          <button onClick={() => handlePageChange(pageNumber - 1)} className="px-4 py-2 bg-blue-500 text-white rounded">
+            前のページ
+          </button>
+        )}
+        {pageNumber < totalPages && (
+          <button onClick={() => handlePageChange(pageNumber + 1)} className="px-4 py-2 bg-blue-500 text-white rounded">
+            次のページ
+          </button>
+        )}
+      </div>
     </div>
   );
 }

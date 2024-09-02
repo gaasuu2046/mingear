@@ -1,82 +1,88 @@
 // app/gear/page.tsx
-import { Gear, Review } from '@prisma/client';
-import { notFound } from 'next/navigation'
+import { Prisma } from '@prisma/client';
+import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
-import CategoryNav from './CategoryNav'; // 新しいコンポーネント
-import GearCategory from './GearCategory'; // 新しいコンポーネント
+import CategoryNav from './CategoryNav';
+import GearCategory from './GearCategory';
 
 import SearchForm from '@/components/SearchForm';
 import prisma from '@/lib/prisma'
 
+
+
 async function getGearList(searchParams: {
   search?: string;
+  category?: string;
+  page?: string;
 }) {
-  const { search } = searchParams;
-  const gearList = await prisma.gear.findMany({
-    where: {
-      AND: [
-        search ? {
-          OR: [
-            { name: { contains: search, mode: 'insensitive' } },
-            { description: { contains: search, mode: 'insensitive' } },
-            { brand: { contains: search, mode: 'insensitive' } },
-          ],
-        } : {}
-      ],
-    },
+  const { search, category = 'テント・タープ', page } = searchParams;
+  const pageNumber = parseInt(page || '1', 10);
+  const pageSize = 20;
+
+  const where: Prisma.GearWhereInput = {
+    AND: [
+      search
+        ? {
+            OR: [
+              { name: { contains: search, mode: 'insensitive' } },
+              { description: { contains: search, mode: 'insensitive' } },
+              { brand: { name: { contains: search, mode: 'insensitive' } } },
+            ],
+          }
+        : {},
+      { category: { name: category } },
+    ],
+  };
+  
+  const gears = await prisma.gear.findMany({
+    where,
     include: {
-      reviews: true
+      reviews: true,
+      category: true,
+      brand: true
+    },
+    take: pageSize,
+    skip: (pageNumber - 1) * pageSize,
+    orderBy: {
+      reviews: {
+        _count: 'desc'
+      }
     }
   });
 
-  if (!gearList) notFound();
-  return gearList;
-}
+  const totalCount = await prisma.gear.count({ where });
 
-type GearWithReviews = Gear & {
-  reviews: Review[];
-};
+  if (!gears.length && pageNumber > 1) notFound();
+
+  return { gears, totalCount, pageNumber, pageSize, category };
+}
 
 export default async function GearList({ searchParams }: { 
   searchParams: { 
     search?: string;
     category?: string;
+    page?: string;
   } 
 }) {
-  const { search } = searchParams;
-  const gears = await getGearList({ search });
+  const { gears, totalCount, pageNumber, pageSize, category } = await getGearList(searchParams);
+  const totalPages = Math.ceil(totalCount / pageSize);
 
-  // ratingでソート
-  const sortGearsByRating = (gears: GearWithReviews[]) => {
-    return gears.map(gear => ({
-      ...gear,
-      averageRating: gear.reviews.length > 0 ? gear.reviews.reduce((sum, review) => sum + review.rating, 0) / gear.reviews.length : 0
-    })).sort((a, b) => b.averageRating - a.averageRating);
-  };
-
-  // ギアをカテゴリーごとにグループ化
-  const gearsByCategory = sortGearsByRating(gears).reduce((acc, gear) => {
-    if (!acc[gear.category]) {
-      acc[gear.category] = []
-    }
-    acc[gear.category].push(gear)
-    return acc;
-  } , {} as Record<string, typeof gears>)
-  
-  const categories = Object.keys(gearsByCategory);
+  const categories = await prisma.category.findMany();
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl mt-6">カテゴリー別ギア一覧</h1>
+      <h1 className="text-2xl mt-6">ギア一覧</h1>
       <SearchForm />
-      <CategoryNav categories={categories} />
-      {categories.map((category) => (
+      <CategoryNav categories={categories.map(c => c.name)} selectedCategory={category} />
+      <Suspense fallback={<div>Loading...</div>}>
         <GearCategory 
-          key={category} 
-          category={category} 
-          gears={gearsByCategory[category]} 
+          category={category}
+          gears={gears}
+          pageNumber={pageNumber}
+          totalPages={totalPages}
         />
-      ))}
+      </Suspense>
     </div>
   )
 }
