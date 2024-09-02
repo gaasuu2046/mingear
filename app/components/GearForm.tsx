@@ -1,14 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import { AutocompleteField } from './AutocompleteField';
 import { FormField } from './FormField';
 
 export default function GearForm() {
-  const router = useRouter();  
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
@@ -59,7 +57,6 @@ export default function GearForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const baseUrl = window.location.origin;
 
     try {
       const response = await fetch('/api/gear', {
