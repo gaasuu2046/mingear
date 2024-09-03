@@ -13,6 +13,7 @@ interface FormFieldProps {
   step?: string;
   placeholder?: string;
   options?: string[];
+  error?: string;
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -24,7 +25,8 @@ export const FormField: React.FC<FormFieldProps> = ({
   required = false,
   rows = 4,
   placeholder,
-  options = []
+  options = [],
+  error,
 }) => {
   return (
     <div className="text-black">
@@ -67,6 +69,7 @@ export const FormField: React.FC<FormFieldProps> = ({
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       )}
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
   );
 };

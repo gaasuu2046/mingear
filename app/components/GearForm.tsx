@@ -20,6 +20,10 @@ export default function GearForm() {
   const [weight, setWeight] = useState('');
   const [productUrl, setProductUrl] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [newBrand, setNewBrand] = useState('');
+  const [isNewBrand, setIsNewBrand] = useState(false);
+  const [isImageValid, setIsImageValid] = useState(true);
+
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -55,8 +59,28 @@ export default function GearForm() {
     fetchBrands();
   }, []);
 
+  // 画像urlのチェック
+  const checkImageUrl = async (url: string) => {
+    try {
+      const response = await fetch(url, { method: 'HEAD' });
+      return response.ok;
+    } catch (error) {
+      setIsImageValid(false);
+      console.error('画像URLのチェック中にエラーが発生しました:', error);
+      return false;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 画像urlのチェック  
+    const isValidImageUrl = await checkImageUrl(img);
+    if (!isValidImageUrl) {
+      setIsImageValid(false);
+      alert('指定された画像URLが無効です。有効な画像URLを入力してください。');
+      return;
+    }
 
     try {
       const response = await fetch('/api/gear', {
@@ -66,7 +90,8 @@ export default function GearForm() {
           name, 
           description, 
           categoryID, 
-          brandID, 
+          brandID: isNewBrand ? null : brandID,
+          brandName: isNewBrand ? newBrand : null,
           img, 
           price: parseInt(price, 10),
           weight: parseInt(weight, 10),
@@ -85,6 +110,7 @@ export default function GearForm() {
         setPrice('');
         setWeight('');
         setProductUrl('');
+        setIsNewBrand(false);
         setIsSubmitted(true);
       } else {
         const errorData = await response.json();
@@ -146,21 +172,48 @@ export default function GearForm() {
           required
           options={categories.map(c => c.name)}
         />
-
-        <AutocompleteField
-          label="ブランド"
-          id="brand"
-          value={brand}
-          onChange={(value) => {
-            setBrand(value);
-            const selectedBrand = brands.find(b => b.name === value);
-            setBrandID(selectedBrand ? selectedBrand.id : '');
-          }}
-          options={brands.map(b => b.name)}
-          placeholder="THERM-A-REST"
-          required
-        />
-
+        {!isNewBrand ? (
+        <>
+          <AutocompleteField
+            label="ブランド"
+            id="brand"
+            value={brand}
+            onChange={(value) => {
+              setBrand(value);
+              const selectedBrand = brands.find(b => b.name === value);
+              setBrandID(selectedBrand ? selectedBrand.id : '');
+            }}
+            options={brands.map(b => b.name)}
+            placeholder="THERM-A-REST"
+            required
+          />
+          <button 
+              type="button" 
+              onClick={() => setIsNewBrand(true)}
+              className="text-blue-500 hover:underline"
+            >
+              新しいブランドを追加
+          </button>
+        </>
+        ) : (
+          <>
+          <FormField
+            label="新しいブランド名"
+            id="newBrand"
+            value={newBrand}
+            onChange={(e) => setNewBrand(e.target.value)}
+            placeholder="新しいブランド名を入力"
+            required
+          />
+          <button 
+            type="button" 
+            onClick={() => setIsNewBrand(false)}
+            className="text-blue-500 hover:underline"
+          >
+            既存のブランドを選択
+          </button>
+        </>
+        )} 
         <FormField
           label="画像URL"
           id="img"
@@ -168,6 +221,7 @@ export default function GearForm() {
           onChange={(e) => setImg(e.target.value)}
           placeholder="https://img.sample.com"
           required
+          error={!isImageValid ? "無効な画像URLです" : ""}
         />
 
         <FormField
