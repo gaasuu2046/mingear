@@ -12,7 +12,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const { name, description, categoryID, brandID, brandName, img, price, weight, productUrl } = body
+  const { name, description, categoryID, brandID, brandName, img, price, weight } = body
   
   let brand;
   if (brandID) {
@@ -21,7 +21,10 @@ export async function POST(request: Request) {
   } else if (brandName) {
     // 新しいブランドを作成
     brand = { create: { name: brandName } }
+  } else {
+    throw new Error('brandID または brandName が必要です')
   }
+  
   const gear = await prisma.gear.create({
     data: {
       name,
