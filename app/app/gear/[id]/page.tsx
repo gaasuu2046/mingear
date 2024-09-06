@@ -51,7 +51,7 @@ export default async function GearDetail({ params }: { params: { id: string } })
               <p className="text-base text-gray-500">{gear.description}</p>
             </div>
             <div className="mt-6">
-              <AddToPackingListButton gearId={gear.id} />
+              <AddToPackingListButton gearId={gear.id} type="public" />
             </div>
             <div className="mt-6">
             <Link href={gear.productUrl || '#'} className="text-blue-500 hover:underline">

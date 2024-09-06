@@ -14,6 +14,8 @@ interface FormFieldProps {
   placeholder?: string;
   options?: string[];
   error?: string;
+  onInvalid?: (e: React.InvalidEvent<HTMLInputElement>) => void;
+  onInput?: (e: React.FormEvent<HTMLInputElement>) => void;
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -27,9 +29,11 @@ export const FormField: React.FC<FormFieldProps> = ({
   placeholder,
   options = [],
   error,
+  onInvalid,
+  onInput,
 }) => {
   return (
-    <div className="text-black">
+    <div className="text-black w-full max-w-2xl">
       <label htmlFor={id} className="block text-sm font-medium text-black mb-1">
         {label}
       </label>
@@ -67,6 +71,8 @@ export const FormField: React.FC<FormFieldProps> = ({
           required={required}
           placeholder={placeholder}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onInvalid={onInvalid}
+          onInput={onInput}
         />
       )}
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}

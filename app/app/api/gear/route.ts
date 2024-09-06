@@ -12,7 +12,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const { name, description, categoryID, brandID, brandName, img, price, weight } = body
+  const { name, description, categoryID, brandID, brandName, img, price, weight, productUrl } = body
   
   let brand;
   if (brandID) {
@@ -35,7 +35,8 @@ export async function POST(request: Request) {
       category: {
         connect: { id: categoryID }
       },
-      brand: brand
+      brand: brand,
+      productUrl
     },
     include: {
       category: true,

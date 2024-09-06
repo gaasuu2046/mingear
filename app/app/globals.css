@@ -18,12 +18,24 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  /* background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb)); */
   background: rgb(var(--background-end-rgb));
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+/* フォーム要素のテキストを黒色に設定 */
+@layer base {
+  form,
+  form input,
+  form textarea,
+  form select,
+  form option,
+  form label,
+  .form-text-black {
+    color: black;
   }
 }

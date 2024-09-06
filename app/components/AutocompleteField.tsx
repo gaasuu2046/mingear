@@ -6,9 +6,11 @@ interface AutocompleteFieldProps {
   id: string;
   value: string;
   onChange: (value: string) => void;
-  options: string[];
+  options?: string[];
   placeholder?: string;
   required?: boolean;
+  onInvalid?: (e: React.InvalidEvent<HTMLInputElement>) => void;
+  onInput?: (e: React.FormEvent<HTMLInputElement>) => void;
 }
 
 export const AutocompleteField: React.FC<AutocompleteFieldProps> = ({
@@ -19,12 +21,16 @@ export const AutocompleteField: React.FC<AutocompleteFieldProps> = ({
   options,
   placeholder,
   required = false,
+  onInvalid,
+  onInput,
 }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (options === undefined) return;
+
     const filtered = options.filter(option =>
       option.toLowerCase().includes(value.toLowerCase())
     );
@@ -60,7 +66,9 @@ export const AutocompleteField: React.FC<AutocompleteFieldProps> = ({
         onBlur={handleBlur}
         placeholder={placeholder}
         required={required}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+        onInvalid={onInvalid}
+        onInput={onInput}
       />
       {showSuggestions && filteredOptions.length > 0 && (
         <ul className="absolute z-10 w-full bg-white border border-gray-300 mt-1 rounded-md shadow-lg max-h-60 overflow-auto">

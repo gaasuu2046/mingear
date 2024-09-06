@@ -23,7 +23,7 @@ export default function CategoryNav({ categories, selectedCategory }: { categori
   };
 
   return (
-    <nav className="flex flex-wrap gap-2 mb-4">
+    <nav className="flex flex-wrap gap-1 mb-1 text-xs sm:text-sm">
       {categories.map((category) => (
         <button
           key={category}
