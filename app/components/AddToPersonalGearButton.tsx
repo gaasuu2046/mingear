@@ -89,12 +89,14 @@ export default function AddToPersonalGearButton({
           <Link href="/my-gear" className="text-blue-500 hover:underline">
             所有ギアを見る
           </Link>
-          <button
-            onClick={() => setIsAdded(false)}
-            className="text-blue-500 hover:underline"
-          >
-            閉じる
-          </button>
+          <p>
+            <button
+              onClick={() => setIsAdded(false)}
+              className="text-blue-500 hover:underline"
+            >
+              閉じる
+            </button>
+          </p>
         </div>
       </div>
     )
