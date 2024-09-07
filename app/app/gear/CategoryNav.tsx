@@ -23,11 +23,11 @@ export default function CategoryNav({ categories, selectedCategory }: { categori
   };
 
   return (
-    <nav className="flex flex-wrap gap-1 mb-1 text-xs sm:text-sm">
+    <nav className="flex flex-wrap gap-1 text-xs sm:text-xs">
       {categories.map((category) => (
         <button
           key={category}
-          className={`px-3 py-2 rounded-full ${
+          className={`px-2 py-2 rounded-full ${
             selectedCategory === category
               ? 'bg-blue-500 text-white'
               : 'bg-gray-200 text-gray-700'

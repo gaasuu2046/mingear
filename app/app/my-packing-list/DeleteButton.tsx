@@ -2,16 +2,15 @@
 
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 interface DeleteButtonProps {
   id: number
+  className?: string
 }
 
-export default function DeleteButton({ id }: DeleteButtonProps) {
+export default function DeleteButton({ id,className }: DeleteButtonProps) {
   const [isDeleting, setIsDeleting] = useState(false)
-  const router = useRouter()
 
   const handleDelete = async () => {
     setIsDeleting(true)
@@ -46,7 +45,7 @@ export default function DeleteButton({ id }: DeleteButtonProps) {
 
   return (
     <button
-      className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors disabled:bg-red-300 w-full"
+      className={`bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors disabled:bg-red-300 w-full ${className}`}
       onClick={handleDelete}
       disabled={isDeleting}
     >

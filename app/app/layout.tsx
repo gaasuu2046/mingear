@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth/next"
 import { FaList, FaListAlt, FaStar, FaUser, FaPlusCircle } from 'react-icons/fa'
 import { GrCatalog } from 'react-icons/gr'
 
+
 import type { Metadata } from 'next'
 
 import { Providers } from '@/components/Providers'

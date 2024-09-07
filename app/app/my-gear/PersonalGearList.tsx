@@ -12,6 +12,7 @@ import DeleteButton  from './DeleteButton'
 import AddToPackingListButton from '@/components/AddToPackingListButton'
 import { AutocompleteField } from '@/components/AutocompleteField'
 import { FormField } from '@/components/FormField'
+import { SearchSuggestionComponent } from '@/components/SearchSuggestionComponent'
 
 interface PersonalGearWithRelations extends PersonalGear {
   category: Category;
@@ -73,17 +74,17 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
     fetchCategories()
   }, [])
 
-  const handleSearch = async (value: string) => {
-    setName(value)
+  // const handleSearch = async (value: string) => {
+  //   setName(value)
 
-    if (value.length > 1) {
-      const response = await fetch(`/gear/search?q=${value}`)
-      const data = await response.json()
-      setSuggestions(data)
-    } else {
-      setSuggestions([])
-    }
-  }
+  //   if (value.length > 1) {
+  //     const response = await fetch(`/gear/search?q=${value}`)
+  //     const data = await response.json()
+  //     setSuggestions(data)
+  //   } else {
+  //     setSuggestions([])
+  //   }
+  // }
   
   // サジェスチョンから選択されたギアを所有ギアとして登録する処理
   const handleAddGear = async (gear: Gear) => {
@@ -169,16 +170,13 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
         <div className="mx-auto mt-10 bg-white p-8 border border-gray-300 rounded-lg shadow-lg w-full max-w-2xl">
           <form onSubmit={handleAddCustomGear} className="space-y-6">
             <h2 className="text-2xl font-bold text-center text-black mb-6">新しいギアを登録</h2>
-            
-            <AutocompleteField
+            <SearchSuggestionComponent 
               label="商品名"
-              id="name"
-              value={name}
-              onChange={handleSearch}
-              placeholder="NeoAir®︎UBERLITE small"
-              required
+              placeholder="商品名を入力"
+              buttonTxt="追加"
+              onAddGear={handleAddGear} type="public" searchLimit={5} inputClassName='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black' 
             />
-            {suggestions.length > 0 && (
+            {/* {suggestions.length > 0 && (
               <ul className="mt-2 border rounded">
                 {suggestions.map((gear) => (
                   <li
@@ -197,7 +195,7 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
                   </li>
                 ))}
               </ul>
-            )}
+            )} */}
 
             <FormField
               label="重量 (g)"

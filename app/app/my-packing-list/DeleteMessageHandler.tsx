@@ -9,7 +9,7 @@ export default function DeleteMessageHandler() {
   useEffect(() => {
     const handleCustomEvent = (event: CustomEvent) => {
       setMessage(event.detail)
-      setTimeout(() => setMessage(''), 3000) // 3秒後にメッセージを消す
+      setTimeout(() => setMessage(''), 2000) // 3秒後にメッセージを消す
     }
 
     window.addEventListener('deleteSuccess', handleCustomEvent as EventListener)
@@ -22,7 +22,7 @@ export default function DeleteMessageHandler() {
   if (!message) return null
 
   return (
-    <div className="fixed bottom-5 right-5 bg-green-500 text-white p-4 rounded-lg shadow-lg">
+    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 z-50 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg">
       {message}
     </div>
   )

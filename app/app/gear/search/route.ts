@@ -1,10 +1,26 @@
 // app/gear/search/route.ts
 import { Prisma } from '@prisma/client'
+import { PersonalGear, Category, Brand, Gear, Review } from '@prisma/client'
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
+
+
+interface publicGearWithRelations extends Gear {
+  category: Category;
+  brand: Brand | null;
+  reviews: Review[];
+}
+interface FormattedPublicGear extends publicGearWithRelations {
+  type: 'public';
+}
+interface PersonalGearWithRelations extends PersonalGear {
+  category: Category;
+  brand: Brand | null;
+}
+
 
 export async function GET(request: Request) {
   const session = await getServerSession(authOptions)
@@ -12,6 +28,9 @@ export async function GET(request: Request) {
   const query = searchParams.get('q')
   const category = searchParams.get('category')
   const brand = searchParams.get('brand')
+  const type = searchParams.get('type')
+  const limit = parseInt(searchParams.get('limit') || '5', 10)
+
 
   const publicGearWhere: Prisma.GearWhereInput = {
     AND: [
@@ -36,6 +55,7 @@ export async function GET(request: Request) {
         ? {
             OR: [
               { name: { contains: query, mode: 'insensitive' } },
+              { brand: { name: { contains: query, mode: 'insensitive' } } },
             ],
           }
         : {},
@@ -44,20 +64,35 @@ export async function GET(request: Request) {
     ],
   }
 
-  const [publicGears, personalGears] = await Promise.all([
-    prisma.gear.findMany({
+  let publicGears: publicGearWithRelations[] = []
+  let personalGears: PersonalGearWithRelations[] = []
+
+  if (type === 'public' || !session?.user) {
+    publicGears = await prisma.gear.findMany({
       where: publicGearWhere,
       include: { reviews: true, category: true, brand: true },
-    }),
-    session?.user
-      ? prisma.personalGear.findMany({
-          where: personalGearWhere,
-          include: { category: true, brand: true }, 
-        })
-      : [],
-  ])
+      orderBy: { avgRating: 'desc' },
+      take: limit,
+    }) as publicGearWithRelations[]
+  } else {
+    personalGears = await prisma.personalGear.findMany({
+      where: personalGearWhere,
+      include: { category: true, brand: true },
+      take: limit,
+    })
 
-  const formattedPublicGears = publicGears.map(gear => ({
+    if (personalGears.length < limit) {
+      const remainingLimit = limit - personalGears.length
+      publicGears = await prisma.gear.findMany({
+        where: publicGearWhere,
+        include: { reviews: true, category: true, brand: true },
+        orderBy: { avgRating: 'desc' },
+        take: remainingLimit,
+      }) as publicGearWithRelations[]
+    }
+  }
+
+  const formattedPublicGears: FormattedPublicGear[] = publicGears.map(gear => ({
     ...gear,
     type: 'public' as const,
   }))
@@ -67,7 +102,7 @@ export async function GET(request: Request) {
     type: 'personal' as const,
   }))
 
-  const allGears = [...formattedPublicGears, ...formattedPersonalGears]
-
+  const allGears = [...formattedPersonalGears, ...formattedPublicGears]
+  
   return NextResponse.json(allGears)
 }

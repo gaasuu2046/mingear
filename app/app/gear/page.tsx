@@ -65,8 +65,8 @@ export default async function GearList({ searchParams }: {
   const categories = await prisma.category.findMany();
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-2xl mt-6">ギアカタログ</h1>
+    <div className="space-y-1">
+      <h1 className="text-xl">ギアカタログ</h1>
       <SearchForm />
       <CategoryNav categories={categories.map(c => c.name)} selectedCategory={category} />
       <Suspense fallback={<div>Loading...</div>}>

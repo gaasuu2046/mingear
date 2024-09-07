@@ -11,23 +11,38 @@ export async function POST(request: Request) {
   if (!session || !session.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-
-  const { gearId, type } = await request.json()
+  const { gearId, personalGearId, type } = await request.json()
   const userId = session.user.id
 
   try {
     let packingListItem;
     if (type === 'public') {
       packingListItem = await prisma.packingList.create({
-        data: { userId, gearId },
+        data: { 
+          userId,
+          gearId
+        },
+        include: {
+          gear: {
+            include: {
+              category: true
+            }
+          }
+        }
       })
     } else if (type === 'personal') {
-      console.log('Adding personal gear to packing list:', gearId)
       packingListItem = await prisma.packingList.create({
         data: { 
           userId, 
-          personalGearId: gearId
+          personalGearId
         },
+        include: {
+          personalGear: {
+            include: {
+              category: true
+            }
+          }
+        }
       });
     } else {
       return NextResponse.json({ error: 'Invalid gear type' }, { status: 400 })
