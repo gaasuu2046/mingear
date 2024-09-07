@@ -224,7 +224,7 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
                 options={brands.map(b => b.name)}
                 placeholder="THERM-A-REST"
                 onInvalid={(e: React.InvalidEvent<HTMLInputElement>) => 
-                  e.target.setCustomValidity('ブランドを選択するか、新しいブランドを入力してください。また、自作ギアの場合はmyogを選択してください。')}
+                  e.target.setCustomValidity('ブランドを選択するか、新しいブランドを入力してください。')}
                 onInput={(e: React.FormEvent<HTMLInputElement>) => 
                   e.currentTarget.setCustomValidity('')}
                         />

@@ -129,7 +129,7 @@ export default function GearForm() {
         <h2 className="text-2xl font-bold text-green-600 mb-4">登録成功！</h2>
         <p className="mb-4 text-black">新しいギアが正常に登録されました。</p>
         <Link href="/gear" className="text-blue-500 hover:underline">
-          ギア一覧ページへ
+          ギアカタログへ
         </Link>
       </div>
     );

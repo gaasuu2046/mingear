@@ -48,7 +48,7 @@ export default function DeleteButton({ id, className }: DeleteButtonProps) {
     onClick={handleDelete}
       disabled={isDeleting}
     >
-      {isDeleting ? '削除中...' : 'リストから削除'}
+      {isDeleting ? '削除中...' : '削除'}
     </button>
   )
 }

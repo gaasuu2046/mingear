@@ -90,7 +90,7 @@ export default async function MyPackingList() {
           </li>
           <li>
             <Link href="/" className="text-blue-400 hover:underline">
-              全アイテム一覧
+              ギアカタログ
             </Link>
             から追加する
           </li>

@@ -66,7 +66,7 @@ export default async function GearList({ searchParams }: {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl mt-6">ギア一覧</h1>
+      <h1 className="text-2xl mt-6">ギアカタログ</h1>
       <SearchForm />
       <CategoryNav categories={categories.map(c => c.name)} selectedCategory={category} />
       <Suspense fallback={<div>Loading...</div>}>

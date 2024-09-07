@@ -3,7 +3,8 @@ import { Noto_Sans_JP } from 'next/font/google'
 import Link from 'next/link'
 import { Session } from "next-auth"
 import { getServerSession } from "next-auth/next"
-import { FaList, FaStar, FaUser } from 'react-icons/fa'
+import { FaList, FaListAlt, FaStar, FaUser, FaPlusCircle } from 'react-icons/fa'
+import { GrCatalog } from 'react-icons/gr'
 
 import type { Metadata } from 'next'
 
@@ -38,10 +39,11 @@ export default async function RootLayout({
             <div className="flex flex-col sm:flex-row justify-between items-center">
                 <h1 className="text-2xl mb-4 sm:mb-0 text-green-400">Rate Your Own Gear!</h1>
                 <ul className="flex space-x-1 sm:space-x-2 text-xs sm:text-sm">
-                  <NavItem href="/" icon={<FaList />} text="ギア一覧" />
+                  <NavItem href="/" icon={<GrCatalog />} text="ギアカタログ" />
                   {/* <NavItem href="/gear" icon={<FaList />} text="ギア一覧" /> */}
-                  <NavItem href="/my-packing-list" icon={<FaList />} text="パッキングレシピ" />
+                  <NavItem href="/my-packing-list" icon={<FaListAlt />} text="パッキングレシピ" />
                   <NavItem href="/my-gear" icon={<FaList />} text="所有ギア" />
+                  <NavItem href="/gear/register" icon={<FaPlusCircle />} text="ギア登録" />
                   <NavItem href="/reviews" icon={<FaStar />} text="レビュー" />
                 </ul>
                 <div className="flex items-center space-x-4">
