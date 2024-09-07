@@ -43,14 +43,14 @@ export default function GearCategory({
             <div key={gear.id} className="border rounded-lg shadow-md">
               <Link href={`/gear/${gear.id}`} className="block">
                 <h3 className="text-sm font-semibold mb-2 line-clamp-2 h-10">{gear.name}</h3>
-                <div className="relative w-full h-48 bg-gray-200 rounded-lg overflow-hidden">
+                <div className="relative w-full h-32 sm:h-48 bg-gray-200 rounded-lg overflow-hidden">
                   <Image 
                     src={gear.img} 
                     alt={gear.name} 
                     layout="fill"
-                    objectFit="contain"
+                    objectFit="cover"
                     objectPosition="center"
-                    className="transition-transform duration-300 hover:scale-105"
+                    className="transition-transform h-32 sm:h-48 duration-300 hover:scale-105"
                   />
                 </div>
                 <p className="text-white">
@@ -64,24 +64,24 @@ export default function GearCategory({
                   </p>
                 </div>
               </Link>
-              <div className="p-2 flex">
-                  <div className="flex-1 mr-2">
-                    <AddToPackingListButton gearId={gear.id} type="public" className="w-full text-sm" />
-                  </div>
-                  <div className="flex-1">
-                    <AddToPersonalGearButton
-                      gearId={gear.id}
-                      name={gear.name}
-                      weight={gear.weight}
-                      categoryId={gear.categoryId}
-                      brandId={gear.brandId}
-                      brandName={gear.brand.name}
-                      img={gear.img}
-                      price={gear.price ?? undefined}
-                      productUrl={gear.productUrl ?? ''}
-                      className="w-full text-sm"
-                    />
-                  </div>
+              <div className="p-1 flex flex-col">
+                <div className="flex-1 mb-2 sm:mb-0">
+                  <AddToPackingListButton gearId={gear.id} type="public" className="w-full text-sm" />
+                </div>
+                <div className="flex-1">
+                  <AddToPersonalGearButton
+                    gearId={gear.id}
+                    name={gear.name}
+                    weight={gear.weight}
+                    categoryId={gear.categoryId}
+                    brandId={gear.brandId}
+                    brandName={gear.brand.name}
+                    img={gear.img}
+                    price={gear.price ?? undefined}
+                    productUrl={gear.productUrl ?? ''}
+                    className="w-full text-sm"
+                  />
+                </div>
               </div>
             </div>
         ))}

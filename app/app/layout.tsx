@@ -35,10 +35,10 @@ export default async function RootLayout({
       <body className={`${inter.className} flex flex-col min-h-screen bg-gray-900 text-gray-100`}>
         <Providers>
           <header className="bg-gray-800 shadow-lg">
-          <nav className="container mx-auto px-2 py-2 sm:px-4 sm:py-3">
+          <nav className="container mx-auto px-1 py-2 sm:px-2 sm:py-3 w-full sm:w-11/12 md:w-10/12 lg:w-9/12 xl:w-8/12">
             <div className="flex flex-col sm:flex-row justify-between items-center">
-                <h1 className="text-2xl mb-4 sm:mb-0 text-green-400">Rate Your Own Gear!</h1>
-                <ul className="flex space-x-1 sm:space-x-2 text-xs sm:text-sm">
+                <h1 className="text-2xl mb-0 sm:mb-0 text-green-400">Rate Your Own Gear!</h1>
+                <ul className="flex text-xs sm:text-sm whitespace-nowrap">
                   <NavItem href="/" icon={<GrCatalog />} text="ギアカタログ" />
                   {/* <NavItem href="/gear" icon={<FaList />} text="ギア一覧" /> */}
                   <NavItem href="/my-packing-list" icon={<FaListAlt />} text="パッキングレシピ" />

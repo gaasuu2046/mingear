@@ -102,22 +102,22 @@ export default async function MyPackingList() {
       {Object.entries(gearByCategory).map(([category, items]) => (
         <div key={category} className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">{category}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {items.map((item) => {
               const gear = item.gear || item.personalGear
               return (
-                <div key={item.id} className="border rounded-lg p-4 shadow-sm">
+                <div key={item.id} className="border rounded-lg p-2 shadow-sm">
                   <Link href={`/gear/${gear?.id}`}>
-                    <div className="w-full h-48 bg-gray-200 rounded-md mb-4 flex items-center justify-center">
+                    <h3 className="text-sm font-semibold mb-1 line-clamp-2 h-10">{gear?.name}</h3>
+                    <div className="w-full bg-gray-200 rounded-md mb-1 flex items-center justify-center">
                         <Image
                           src={gear?.img || '/logo.png'}
                           alt={gear?.name || 'Gear Image'}
                           width={200}
                           height={200}
-                          className="w-full h-full object-cover rounded-md"
+                          className="w-full h-32 sm:h-48 object-cover rounded-md"
                         />
                     </div>
-                    <h3 className="text-xl font-semibold">{gear?.name}</h3>
                   </Link>
                   <p className="text-gray-600">重量: {gear?.weight || '不明'}g</p>
                   <DeleteButton id={item.id} />

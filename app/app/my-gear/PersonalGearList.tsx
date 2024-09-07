@@ -311,34 +311,34 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
         </div>
       )}
       {Object.entries(gearByCategory).map(([category, items]) => (
-        <div key={category} className="mb-8">
+        <div key={category} className="mb-1">
           <h2 className="text-2xl font-semibold mb-4">{category}</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {items.map((item) => (
-              <div key={item.id} className="border rounded-lg p-4 shadow-sm">
+              <div key={item.id} className="border rounded-lg shadow-sm">
                 <Link href={`/gear/${item.gearId}`}>
+                  <h3 className="text-sm font-semibold mb-2 line-clamp-2 h-10">{item.name}</h3>
                   <Image
                     src={item.img || '/logo.png'}
                     alt={item.name}
                     width={200}
-                    height={200}
-                    className="w-full h-48 object-cover rounded-md mb-4"
+                    height={100}
+                    className="w-full h-32 sm:h-48 object-cover rounded-md mb-4"
                   />
-                  <h3 className="text-xl font-semibold">{item.name}</h3>
                 </Link>
                 <p className="text-gray-600">重量: {item.weight}g</p>
-                <div className="mt-6 flex">
-                  <div className="flex-1 mr-2">
+                <div className="p-1 flex flex-col">
+                  <div className="flex-1 mb-2 sm:mb-0">
                     <AddToPackingListButton 
                       gearId={item.id} 
                       type="personal" 
-                      className="w-full py-2 px-2 text-sm"
+                      className="w-full text-sm"
                     />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 mb-2 sm:mb-0">
                     <DeleteButton 
                       id={item.id} 
-                      className="w-full py-2 px-4 text-sm"
+                      className="w-full text-sm"
                     />
                   </div>
                 </div>

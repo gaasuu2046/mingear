@@ -7,8 +7,7 @@ export default function UserInfo({ session }: { session: Session | null }) {
 
   return (
     <div className="text-sm">
-      <p>Welcome, {session.user?.name || 'User'}さん!</p>
-      <p>{session.user?.email}</p>
+      <p>ようこそ,{session.user?.name || 'User'}さん!</p>
     </div>
   )
 }
