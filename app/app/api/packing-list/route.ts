@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       packingListItem = await prisma.packingList.create({
         data: { 
           userId, 
-          personalGearId
+          personalGearId: personalGearId
         },
         include: {
           personalGear: {

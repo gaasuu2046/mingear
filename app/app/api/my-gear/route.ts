@@ -17,7 +17,6 @@ export async function POST(request: Request) {
   try {
     const body = await request.json()
     const { name, gearId, weight, categoryId, brandId, brandName, img, price, productUrl } = body;
-    console.log('body', body)
     let brand;
     if (brandId)  {
       brand = { connect: { id: brandId } };

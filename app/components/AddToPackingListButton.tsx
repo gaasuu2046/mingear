@@ -32,7 +32,11 @@ export default function AddToPackingListButton({ gearId, type, className }:  Add
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ gearId, type }),
+        body: JSON.stringify({ 
+          gearId: type === 'public' ? gearId : undefined,
+          personalGearId: type === 'personal' ? gearId : undefined,
+          type
+         }),
       })
 
       if (response.ok) {

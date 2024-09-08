@@ -39,6 +39,8 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
   const [isNewBrand, setIsNewBrand] = useState(false);
   const [brands, setBrands] = useState<{ id: string, name: string }[]>([]);
   const [brandID, setBrandID] = useState('');
+  const [isSearchSuggestionUsed, setIsSearchSuggestionUsed] = useState(false);
+  const [isGearAdded, setIsGearAdded] = useState(false);
 
   useEffect(() => {
     const fetchBrands = async () => {
@@ -74,20 +76,10 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
     fetchCategories()
   }, [])
 
-  // const handleSearch = async (value: string) => {
-  //   setName(value)
-
-  //   if (value.length > 1) {
-  //     const response = await fetch(`/gear/search?q=${value}`)
-  //     const data = await response.json()
-  //     setSuggestions(data)
-  //   } else {
-  //     setSuggestions([])
-  //   }
-  // }
   
   // サジェスチョンから選択されたギアを所有ギアとして登録する処理
   const handleAddGear = async (gear: Gear) => {
+    setIsSearchSuggestionUsed(true)
     const response = await fetch('/api/my-gear', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -106,12 +98,18 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
     if (response.ok) {
       const newPersonalGear = await response.json()
       setGearList([...gearList, newPersonalGear])
+      setIsGearAdded(true); // ギアが正常に追加されたことを示す
       resetForm()
     }
   }
 
   const handleAddCustomGear = async (e: React.FormEvent) => {
+    if (isGearAdded) {
+      // すでにギアが追加されている場合は、この関数を終了します
+      return;
+    }
     e.preventDefault()
+    
     const response = await fetch('/api/my-gear', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -176,26 +174,6 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
               buttonTxt="追加"
               onAddGear={handleAddGear} type="public" searchLimit={5} inputClassName='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black' 
             />
-            {/* {suggestions.length > 0 && (
-              <ul className="mt-2 border rounded">
-                {suggestions.map((gear) => (
-                  <li
-                    key={gear.id}
-                    className="p-2 hover:bg-gray-100 cursor-pointer text-black flex justify-between items-center"
-                  >
-                    <span>{gear.name}</span>
-                    <img src={gear.img} alt={gear.name} className="w-8 h-8" />
-                    <button
-                      type="button"
-                      onClick={() => handleAddGear(gear)}
-                      className="bg-blue-500 text-white py-1 px-2 rounded text-sm hover:bg-blue-600"
-                    >
-                      所有ギアとして登録
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )} */}
 
             <FormField
               label="重量 (g)"
@@ -204,7 +182,7 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
               value={weight}
               onChange={(e) => setWeight(e.target.value)}
               placeholder="178"
-              required
+              required={!isSearchSuggestionUsed}
               min="0"
               step="1"
             />
@@ -242,7 +220,7 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
                 value={newBrand}
                 onChange={(e) => setNewBrand(e.target.value)}
                 placeholder="新しいブランド名を入力"
-                required
+                required={!isSearchSuggestionUsed}
                 onInvalid={(e: React.InvalidEvent<HTMLInputElement>) => 
                   e.target.setCustomValidity('新しいブランドを入力してください。また、自作ギアの場合は`MYOG`を選択してください。')}
                 onInput={(e: React.FormEvent<HTMLInputElement>) => 
@@ -267,7 +245,7 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
                 const selectedCategory = categories.find(c => c.name === e.target.value)
                 setCategoryID(selectedCategory ? selectedCategory.id : '')
               }}
-              required
+              required={!isSearchSuggestionUsed}
               options={categories.map(c => c.name)}
             />
 
