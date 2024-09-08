@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 
 interface SearchSuggestionComponentProps {
   onAddGear: (gear: Gear) => void;
+  onNameChange?: (name: string) => void;
   label: string;
   buttonTxt: string;
   placeholder?: string;
@@ -14,11 +15,14 @@ interface SearchSuggestionComponentProps {
   suggestionContainerClassName?: string;
 }
 
-export const SearchSuggestionComponent: React.FC<SearchSuggestionComponentProps> = ({ onAddGear ,label, buttonTxt, placeholder, type, searchLimit, inputClassName,suggestionContainerClassName }) => {
+export const SearchSuggestionComponent: React.FC<SearchSuggestionComponentProps> = ({ onAddGear, onNameChange, label, buttonTxt, placeholder, type, searchLimit, inputClassName,suggestionContainerClassName }) => {
   const [name, setName] = useState('');
   const [suggestions, setSuggestions] = useState<Gear[]>([]);
 
-  const handleSearch = async (value: string) => {
+  const handleSearch = async (value: string) => {  
+    if (onNameChange) {
+      onNameChange(value);
+    }
     setName(value);
     if (value.length > 1) {
       const response = await fetch(`/gear/search?q=${value}&limit=${searchLimit}&type=${type}`);
@@ -36,6 +40,7 @@ export const SearchSuggestionComponent: React.FC<SearchSuggestionComponentProps>
       </label>
       <input
         type="text"
+        id="name"
         value={name}
         onChange={(e) => handleSearch(e.target.value)}
         placeholder={placeholder}

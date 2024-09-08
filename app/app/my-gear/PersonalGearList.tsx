@@ -94,7 +94,7 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
         productUrl: gear.productUrl,
       }),
     })
-
+    
     if (response.ok) {
       const newPersonalGear = await response.json()
       setGearList([...gearList, newPersonalGear])
@@ -102,6 +102,10 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
       resetForm()
     }
   }
+  const handleNameChange = (newName: string) => {
+    setName(newName);
+    setIsSearchSuggestionUsed(false);
+  };
 
   const handleAddCustomGear = async (e: React.FormEvent) => {
     if (isGearAdded) {
@@ -172,7 +176,10 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
               label="商品名"
               placeholder="商品名を入力"
               buttonTxt="追加"
-              onAddGear={handleAddGear} type="public" searchLimit={5} inputClassName='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black' 
+              onAddGear={handleAddGear} 
+              type="public" 
+              onNameChange={handleNameChange}
+              searchLimit={5} inputClassName='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black' 
             />
 
             <FormField
