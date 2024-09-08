@@ -136,7 +136,6 @@ export default function PackingListClient({ initialGearByCategory, initialTotalW
         placeholder="ギアを追加"
         buttonTxt="追加"
         onAddGear={handleAddGear}
-        type="public"
         searchLimit={5}
         inputClassName='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black'
         suggestionContainerClassName='bg-white border border-gray-300 rounded-md shadow-lg'
