@@ -2,8 +2,7 @@ import Link from 'next/link'
 import { Session } from "next-auth"
 import { getServerSession } from 'next-auth/next'
 
-import PackingListClient from './PackingListClient'
-
+import PackingListClient from '@/components/PackingListClient'
 import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 
