@@ -1,0 +1,170 @@
+[
+  {
+    "id": 1,
+    "rating": 5,
+    "comment": "いつもお世話になってます",
+    "gearId": 316,
+    "createdAt": "2024-09-01T01:19:25.955Z"
+  },
+  {
+    "id": 2,
+    "rating": 4,
+    "comment": "とても軽く、初心者にもお勧めできるいいギアだと思います。\n去年からで北アルにいきましたが、快適に過ごせました。",
+    "gearId": 330,
+    "createdAt": "2024-09-01T02:05:15.609Z"
+  },
+  {
+    "id": 3,
+    "rating": 3,
+    "comment": "米を炊くのにいい大きさ",
+    "gearId": 248,
+    "createdAt": "2024-09-01T14:22:43.987Z"
+  },
+  {
+    "id": 4,
+    "rating": 5,
+    "comment": "あまり被らなくてカッコ良い",
+    "gearId": 351,
+    "createdAt": "2024-09-01T14:23:46.733Z"
+  },
+  {
+    "id": 5,
+    "rating": 5,
+    "comment": "間違いなし\n丈夫で軽い",
+    "gearId": 344,
+    "createdAt": "2024-09-01T14:24:45.259Z"
+  },
+  {
+    "id": 6,
+    "rating": 5,
+    "comment": "名品",
+    "gearId": 409,
+    "createdAt": "2024-09-01T14:25:26.468Z"
+  },
+  {
+    "id": 7,
+    "rating": 4,
+    "comment": "化繊なので蒸れにくいのがいいです",
+    "gearId": 409,
+    "createdAt": "2024-09-01T14:27:03.656Z"
+  },
+  {
+    "id": 8,
+    "rating": 5,
+    "comment": "海外ハイカー感",
+    "gearId": 305,
+    "createdAt": "2024-09-01T14:28:21.567Z"
+  },
+  {
+    "id": 9,
+    "rating": 4,
+    "comment": "着脱便利",
+    "gearId": 306,
+    "createdAt": "2024-09-01T14:29:09.506Z"
+  },
+  {
+    "id": 10,
+    "rating": 5,
+    "comment": "毎回これを使ってます",
+    "gearId": 417,
+    "createdAt": "2024-09-02T16:53:13.919Z"
+  },
+  {
+    "id": 11,
+    "rating": 5,
+    "comment": "よい",
+    "gearId": 330,
+    "createdAt": "2024-09-02T17:22:29.208Z"
+  },
+  {
+    "id": 12,
+    "rating": 5,
+    "comment": "",
+    "gearId": 417,
+    "createdAt": "2024-09-02T17:29:52.753Z"
+  },
+  {
+    "id": 13,
+    "rating": 4,
+    "comment": "",
+    "gearId": 344,
+    "createdAt": "2024-09-02T17:30:23.297Z"
+  },
+  {
+    "id": 14,
+    "rating": 3,
+    "comment": "",
+    "gearId": 316,
+    "createdAt": "2024-09-02T17:40:03.042Z"
+  },
+  {
+    "id": 15,
+    "rating": 4,
+    "comment": "へたれない",
+    "gearId": 316,
+    "createdAt": "2024-09-02T17:40:24.686Z"
+  },
+  {
+    "id": 16,
+    "rating": 5,
+    "comment": "結構丈夫で軽い",
+    "gearId": 316,
+    "createdAt": "2024-09-02T17:41:01.223Z"
+  },
+  {
+    "id": 17,
+    "rating": 5,
+    "comment": "",
+    "gearId": 316,
+    "createdAt": "2024-09-02T17:41:31.898Z"
+  },
+  {
+    "id": 18,
+    "rating": 3,
+    "comment": "",
+    "gearId": 316,
+    "createdAt": "2024-09-02T17:41:41.023Z"
+  },
+  {
+    "id": 19,
+    "rating": 5,
+    "comment": "名品",
+    "gearId": 314,
+    "createdAt": "2024-09-02T17:50:01.961Z"
+  },
+  {
+    "id": 20,
+    "rating": 5,
+    "comment": "名品",
+    "gearId": 419,
+    "createdAt": "2024-09-02T18:08:52.177Z"
+  },
+  {
+    "id": 21,
+    "rating": 5,
+    "comment": "ポンチョにもなり二役演じれます",
+    "gearId": 419,
+    "createdAt": "2024-09-02T18:09:22.791Z"
+  },
+  {
+    "id": 22,
+    "rating": 4,
+    "comment": "意外と安い",
+    "gearId": 419,
+    "createdAt": "2024-09-02T18:09:33.909Z"
+  },
+  {
+    "id": 24,
+    "rating": 5,
+    "comment": "めちゃめちゃいい",
+    "gearId": 417,
+    "createdAt": "2024-09-06T17:52:43.141Z"
+  },
+  {
+    "id": 25,
+    "rating": 5,
+    "comment": "お手軽で使いやすい\n収納もしやすい",
+    "gearId": 422,
+    "createdAt": "2024-09-07T01:30:05.529Z"
+  }
+]

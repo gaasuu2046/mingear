@@ -1,131 +1,171 @@
-generator client {
-  provider = "prisma-client-js"
-}
+  generator client {
+    provider = "prisma-client-js"
+  }
 
-datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING")
-}
+  datasource db {
+    provider  = "postgresql"
+    url       = env("POSTGRES_PRISMA_URL")
+    directUrl = env("POSTGRES_URL_NON_POOLING")
+  }
 
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String?
+    access_token      String?
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String?
+    session_state     String?
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
-}
+    @@unique([provider, providerAccountId])
+  }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
+  model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  password      String?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-}
+  model User {
+    id            String            @id @default(cuid())
+    name          String?
+    email         String?           @unique
+    emailVerified DateTime?
+    password      String?
+    image         String?
+    accounts      Account[]
+    packingLists  PackingList[]
+    likes         PackingListLike[]
+    sessions      Session[]
+    trips         Trip[]
+  }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+  model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
 
-  @@unique([identifier, token])
-}
+    @@unique([identifier, token])
+  }
 
-model PackingList {
-  id             Int           @id @default(autoincrement())
-  userId         String
-  gearId         Int?
-  personalGearId Int?
-  createdAt      DateTime      @default(now())
-  gear           Gear?         @relation(fields: [gearId], references: [id])
-  personalGear   PersonalGear? @relation(fields: [personalGearId], references: [id])
+  model PackingList {
+    id        Int               @id @default(autoincrement())
+    userId    String
+    gearId    Int?
+    createdAt DateTime          @default(now())
+    name      String            @default("")
+    detail    String?
+    tripId    Int?
+    updatedAt DateTime          @default(now()) @updatedAt
+    trip      Trip?             @relation(fields: [tripId], references: [id])
+    user      User              @relation(fields: [userId], references: [id])
+    items     PackingListItem[]
+    likes     PackingListLike[]
+  }
 
-  @@unique([userId, gearId, personalGearId])
-}
+  model PackingListItem {
+    id             Int           @id @default(autoincrement())
+    packingListId  Int
+    gearId         Int?
+    personalGearId Int?
+    quantity       Int           @default(1)
+    gear           Gear?         @relation(fields: [gearId], references: [id])
+    packingList    PackingList   @relation(fields: [packingListId], references: [id])
+    personalGear   PersonalGear? @relation(fields: [personalGearId], references: [id])
+  }
 
-model PersonalGear {
-  id           Int           @id @default(autoincrement())
-  userId       String
-  name         String
-  gearId       Int?
-  weight       Int
-  categoryId   Int
-  img          String?
-  price        Int?
-  productUrl   String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  brandId      Int?
-  brand        Brand?        @relation(fields: [brandId], references: [id])
-  category     Category      @relation(fields: [categoryId], references: [id])
-  packingLists PackingList[]
-}
+  model Trip {
+    id           Int           @id @default(autoincrement())
+    name         String
+    detail       String?
+    ptid         String?
+    elevation    Int?
+    lat          Float?
+    lon          Float?
+    userId       String
+    packingLists PackingList[]
+    user         User          @relation(fields: [userId], references: [id])
+  }
 
-model Gear {
-  id           Int           @id @default(autoincrement())
-  name         String        @unique
-  description  String
-  img          String
-  price        Int?
-  productUrl   String?
-  weight       Int
-  brandId      Int
-  categoryId   Int
-  avgRating    Float?        @default(0)
-  reviewCount  Int           @default(0)
-  brand        Brand         @relation(fields: [brandId], references: [id])
-  category     Category      @relation(fields: [categoryId], references: [id])
-  packingLists PackingList[]
-  reviews      Review[]
-}
+  model PackingListLike {
+    id            Int         @id @default(autoincrement())
+    userId        String
+    packingListId Int
+    createdAt     DateTime    @default(now())
+    packingList   PackingList @relation(fields: [packingListId], references: [id])
+    user          User        @relation(fields: [userId], references: [id])
+    @@unique([userId, packingListId])
+  }
 
-model Category {
-  id            Int            @id @default(autoincrement())
-  name          String         @unique
-  gears         Gear[]
-  personalGears PersonalGear[]
-}
+  model PersonalGear {
+    id               Int               @id @default(autoincrement())
+    userId           String
+    name             String
+    weight           Int
+    categoryId       Int
+    img              String?
+    price            Int?
+    productUrl       String?
+    createdAt        DateTime          @default(now())
+    updatedAt        DateTime          @updatedAt
+    brandId          Int?
+    gearId           Int?
+    packingListItems PackingListItem[]
+    brand            Brand?            @relation(fields: [brandId], references: [id])
+    category         Category          @relation(fields: [categoryId], references: [id])
+  }
 
-model Brand {
-  id            Int            @id @default(autoincrement())
-  name          String         @unique
-  gears         Gear[]
-  personalGears PersonalGear[]
-}
+  model Gear {
+    id               Int               @id @default(autoincrement())
+    name             String            @unique
+    description      String
+    img              String
+    price            Int?
+    productUrl       String?
+    weight           Int
+    brandId          Int
+    categoryId       Int
+    avgRating        Float?            @default(0)
+    reviewCount      Int               @default(0)
+    brand            Brand             @relation(fields: [brandId], references: [id])
+    category         Category          @relation(fields: [categoryId], references: [id])
+    packingListItems PackingListItem[]
+    reviews          Review[]
+  }
 
-model Review {
-  id        Int      @id @default(autoincrement())
-  rating    Int
-  comment   String
-  gearId    Int
-  createdAt DateTime @default(now())
-  gear      Gear     @relation(fields: [gearId], references: [id])
-}
+  model Category {
+    id            Int            @id @default(autoincrement())
+    name          String         @unique
+    gears         Gear[]
+    personalGears PersonalGear[]
+  }
 
-model CacheEntry {
-  key       String   @id
-  value     String
-  expiresAt DateTime
-}
+  model Brand {
+    id            Int            @id @default(autoincrement())
+    name          String         @unique
+    gears         Gear[]
+    personalGears PersonalGear[]
+  }
+
+  model Review {
+    id        Int      @id @default(autoincrement())
+    rating    Int
+    comment   String
+    gearId    Int
+    createdAt DateTime @default(now())
+    gear      Gear     @relation(fields: [gearId], references: [id])
+  }
+
+  model CacheEntry {
+    key       String   @id
+    value     String
+    expiresAt DateTime
+  }

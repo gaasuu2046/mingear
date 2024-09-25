@@ -22,7 +22,7 @@ const inter = Noto_Sans_JP({
 
 export const metadata: Metadata = {
   title: 'ウルトラライト！',
-  description: 'UL愛好家のためのギアレビューサイト',
+  description: 'UL愛好家のためのULハイカー/登山者向けのコミュニティーサイト',
 }
 
 export default async function RootLayout({
@@ -42,7 +42,7 @@ export default async function RootLayout({
                 <ul className="flex text-xs sm:text-sm whitespace-nowrap">
                   <NavItem href="/" icon={<GrCatalog />} text="ギアカタログ" />
                   {/* <NavItem href="/gear" icon={<FaList />} text="ギア一覧" /> */}
-                  <NavItem href="/my-packing-list" icon={<FaListAlt />} text="パッキングレシピ" />
+                  <NavItem href="/my-packing-list" icon={<FaListAlt />} text="パッキングリスト" />
                   <NavItem href="/my-gear" icon={<FaList />} text="所有ギア" />
                   <NavItem href="/gear/register" icon={<FaPlusCircle />} text="ギア登録" />
                   <NavItem href="/reviews" icon={<FaStar />} text="レビュー" />
@@ -67,7 +67,7 @@ export default async function RootLayout({
           </main>
           <footer className="bg-gray-800 text-gray-400 p-4 mt-8">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <p>&copy; 2024 ULギアレビューサイト. All rights reserved.</p>
+              <p>&copy; 2024 ULハイカー/登山者向けのコミュニティーサイト. All rights reserved.</p>
             </div>
           </footer>
         </Providers>

@@ -1,4 +1,3 @@
-// app/my-packing-list/page.tsx
 import Link from 'next/link'
 import { Session } from "next-auth"
 import { getServerSession } from 'next-auth/next'
@@ -9,18 +8,30 @@ import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 
 
+
 async function getPackingList(userId: string) {
   const packingList = await prisma.packingList.findMany({
     where: { userId },
-    include: { 
-      gear: {
-        include: { category: true }
+    include: {
+      items: {
+        include: {
+          gear: {
+            include: {
+              category: true
+            }
+          },
+          personalGear: {
+            include: {
+              category: true
+            }
+          }
+        }
       },
-      personalGear: {
-        include: { category: true }
-      }
-    },
-  })
+      trip: true,
+      user: true,
+      likes: true
+    }
+  });
   return packingList
 }
 
@@ -31,7 +42,7 @@ export default async function MyPackingList() {
       <div className="flex flex-col items-center justify-center min-h-screen text-black">
         <div className="text-center p-8 bg-white shadow-md rounded-lg">
           <h1 className="text-2xl font-bold mb-4">ログインが必要です</h1>
-          <p className="mb-6">パッキングレシピを利用するにはログインしてください。</p>
+          <p className="mb-6">パッキングリストを利用するにはログインしてください。</p>
           <Link 
             href="/auth/signin" 
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
@@ -44,7 +55,9 @@ export default async function MyPackingList() {
   }
 
   const packingList = await getPackingList(session.user.id)
-  const totalWeight = packingList.reduce((acc, item) => acc + (item.gear?.weight || item.personalGear?.weight || 0), 0)
+  const totalWeight = packingList.reduce((acc, item) => 
+    acc + (item.gear?.weight || item.personalGear?.weight || 0), 0
+  )
 
   // ギアをカテゴリ毎にグループ化
   const gearByCategory = packingList.reduce((acc, item) => {
@@ -55,5 +68,6 @@ export default async function MyPackingList() {
     acc[category].push(item)
     return acc
   }, {} as Record<string, typeof packingList>)
-  return <PackingListClient initialGearByCategory={gearByCategory} initialTotalWeight={totalWeight} /> 
+
+  return <PackingListClient initialPackingLists={packingList} />
 }

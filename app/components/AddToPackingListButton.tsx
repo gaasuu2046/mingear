@@ -48,7 +48,7 @@ export default function AddToPackingListButton({ gearId, type, className }:  Add
       }
     } catch (error) {
       console.error('Error deleting item:', error)
-      alert('パッキングレシピの登録に失敗しました')
+      alert('パッキングリストの登録に失敗しました')
     } finally {
       setIsLoading(false)
     }
@@ -64,9 +64,9 @@ export default function AddToPackingListButton({ gearId, type, className }:  Add
     return (
       <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50" onClick={handleClosePopup}>
       <div className="bg-white p-4 rounded shadow-lg text-center">
-        <p className="text-green-600 mb-2">パッキングレシピに追加されました！</p>
+        <p className="text-green-600 mb-2">パッキングリストに追加されました！</p>
         <Link href="/my-packing-list" className="text-blue-500 hover:underline">
-          パッキングレシピを見る
+          パッキングリストを見る
         </Link>
       </div>
     </div>
@@ -78,7 +78,7 @@ export default function AddToPackingListButton({ gearId, type, className }:  Add
       disabled={isLoading}
       className={`text-xs bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-600 disabled:bg-blue-300 transition-colors ${className || ''}`}
     >
-      {isLoading ? 'Adding...' : 'パッキングレシピに追加'}
+      {isLoading ? 'Adding...' : 'パッキングリストに追加'}
     </button>
   )
 }
