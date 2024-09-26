@@ -13,22 +13,16 @@ export async function POST(request: Request) {
   const data = await response.json();
   
   if (data.poilist && data.poilist.length > 0) {
-    const poi = data.poilist[0];
-    return NextResponse.json({
+    const poiList = data.poilist.slice(0,5).map(poi => ({
+      ptid: poi.ptid,
       name: poi.name,
-      elevation: poi.elevation,
+      elevation: parseInt(poi.elevation),
+      lat: parseFloat(poi.lat),
+      lon: parseFloat(poi.lon),
       area: poi.area,
-      season: getSeason(new Date()), // 現在の季節を取得する関数
-    });
+    }));
+    return NextResponse.json(poiList);
   } else {
-    return NextResponse.json({ error: '山行情報が見つかりませんでした' }, { status: 404 });
+    return NextResponse.json([], { status: 200 });
   }
-}
-
-function getSeason(date: Date): string {
-  const month = date.getMonth() + 1;
-  if (3 <= month && month <= 5) return '春';
-  if (6 <= month && month <= 8) return '夏';
-  if (9 <= month && month <= 11) return '秋';
-  return '冬';
 }

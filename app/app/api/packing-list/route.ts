@@ -12,61 +12,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
   }
 
-  const { name, tripName, items } = await request.json()
-
+  const { name, tripInfo, items } = await request.json()
+  console.log("tripInfo")
+  console.log(tripInfo)
   try {
-    // 山行・登山計画の検索と作成
-    const tripResponse = await fetch('https://api.yamareco.com/api/v1/searchPoi', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        page: '1',
-        type_id: '0',
-        name: tripName,
-      }),
-    })
-
-    const tripData = await tripResponse.json()
-    let trip
-
-    if (tripData.poilist && tripData.poilist.length > 0) {
-      const poi = tripData.poilist[0]
-      trip = await prisma.trip.create({
-        data: {
-          name: poi.name,
-          ptid: poi.ptid,
-          elevation: parseInt(poi.elevation),
-          lat: parseFloat(poi.lat),
-          lon: parseFloat(poi.lon),
-          userId: session.user.id,
-          area: poi.area || '不明',
-          season: getSeason(new Date()),
-        },
-      })
-    } else {
-      trip = await prisma.trip.create({
-        data: {
-          name: tripName,
-          userId: session.user.id,
-          area: '不明',
-          season: getSeason(new Date()),
-        },
-      })
-    }
-
     const packingList = await prisma.packingList.create({
       data: {
         name,
         userId: session.user.id,
-        tripId: trip.id,
+        detail: tripInfo.detail,
+        season: tripInfo.season,
         items: {
-          create: items.map((item: any) => ({
-            gearId: item.gearId,
-            personalGearId: item.personalGearId,
-            quantity: item.quantity,
-          })),
+          create: Array.isArray(items) ? items.map((item: any) => {
+            const itemData: any = { quantity: item.quantity || 1 };
+            if (item.gearId) itemData.gearId = item.gearId;
+            if (item.personalGearId) itemData.personalGearId = item.personalGearId;
+            return itemData;
+          }) : [],
         },
       },
       include: {
@@ -76,7 +38,6 @@ export async function POST(request: Request) {
             personalGear: true,
           },
         },
-        trip: true,
       },
     })
 
@@ -103,7 +64,6 @@ export async function GET(request: Request) {
         user: {
           select: { name: true, image: true },
         },
-        trip: true,
         items: {
           include: {
             gear: true,
