@@ -16,7 +16,11 @@ async function getPublicPackingLists() {
       trip: true,
       items: {
         include: {
-          gear: true,
+          gear: {
+            include: {
+              brand: true 
+            }
+          },
           personalGear: true,
         },
       },

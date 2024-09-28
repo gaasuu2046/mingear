@@ -11,7 +11,16 @@ interface PackingList {
   name: string;
   user: { name: string };
   trip?: { name: string };
-  items: any[];
+  items: {
+    gear?: {
+      name: string;
+      brand?: { name: string };
+    } | null;
+    personalGear?: {
+      name: string;
+      brand?: { name: string };
+    } | null;
+  }[];
   season: string;
   userId: string;
   _count: { likes: number };
@@ -61,13 +70,16 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
     let result = packingLists;
     if (selectedSeason) {
       const englishSeason = seasons.find(s => s.ja === selectedSeason)?.en;
-      result = result.filter(list => list.season === englishSeason);
+      result = result.filter(list => list .season === englishSeason);
     }
     if (searchTerm) {
       result = result.filter(list => 
         list.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         list.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        list.trip?.name.toLowerCase().includes(searchTerm.toLowerCase())
+        list.trip?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        list.items.some(
+          item => item.gear?.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+          item.gear?.brand?.name.toLowerCase().includes(searchTerm.toLowerCase())) 
       );
     }
     setFilteredLists(result);
@@ -99,7 +111,7 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
         <div className="flex-1 max-w-md ml-4">
           <input
             type="text"
-            placeholder="リスト名、作成者、山行名で検索..."
+            placeholder="リスト名、ギア名、ブランド名等で検索..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full border rounded-md px-3 py-2"
@@ -114,8 +126,27 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
               <h2 className="card-title">{list.name}</h2>
               <p className="card-text">作成者: {list.user.name}</p>
               <p className="card-text">山行: {list.trip?.name || '未設定'}</p>
-              <p className="card-text">アイテム数: {list.items.length}</p>
               <p className="card-text">シーズン: {getJapaneseSeason(list.season)}</p>
+              <div className="mt-4">
+                <p className="font-semibold">ギア一覧:</p>
+                <ul className="space-y-2">
+                  {list.items?.map((item) => (
+                    <li key={item.id} className="flex items-center">
+                      {(item.gear?.img || item.personalGear?.img) && (
+                        <img 
+                          src={item.gear?.img || item.personalGear?.img} 
+                          alt={item.gear?.name || item.personalGear?.name} 
+                          className="w-8 h-8 object-cover mr-3 rounded-sm" 
+                        />
+                      )}
+                      <div className="flex-1 flex items-center justify-between">
+                        <span className="font-medium">{item.gear?.name || item.personalGear?.name}</span>
+                        <span className="text-sm text-gray-600">{item.gear?.weight || item.personalGear?.weight}g</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
               <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center">
                   {currentUserId && currentUserId !== list.userId && (
