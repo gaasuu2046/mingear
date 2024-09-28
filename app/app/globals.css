@@ -4,21 +4,30 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-start-rgb: 230, 235, 240;
+  --background-end-rgb: 245, 250, 255;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 230, 230, 230;
+    --background-start-rgb: 20, 20, 20;
+    --background-end-rgb: 35, 35, 35;
   }
+}
+
+button　{
+  cursor: pointer;
+  color:white;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-end-rgb));
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--background-start-rgb)),
+    rgb(var(--background-end-rgb))
+  );
 }
 
 @layer utilities {
@@ -27,7 +36,7 @@ body {
   }
 }
 
-/* フォーム要素のテキストを黒色に設定 */
+/* フォーム要素のテキストを調整 */
 @layer base {
   form,
   form input,
@@ -36,6 +45,50 @@ body {
   form option,
   form label,
   .form-text-black {
-    color: black;
+    color: #333;
+  }
+}
+
+/* ダークモード時のフォーム要素の調整 */
+@media (prefers-color-scheme: dark) {
+  form,
+  form input,
+  form textarea,
+  form select,
+  form option,
+  form label,
+  .form-text-black {
+    color: #e0e0e0;
+    background-color: #2a2a2a;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg;
+  }
+
+  .card-body {
+    @apply p-6;
+  }
+
+  .card-title {
+    @apply text-xl font-bold mb-2 text-gray-800;
+  }
+
+  .card-text {
+    @apply text-sm text-gray-600 mb-1;
+  }
+
+  .btn {
+    @apply px-4 py-2 rounded-md font-semibold text-sm transition-colors duration-300;
+  }
+
+  .btn-primary {
+    @apply bg-blue-500 text-white hover:bg-blue-600;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
   }
 }

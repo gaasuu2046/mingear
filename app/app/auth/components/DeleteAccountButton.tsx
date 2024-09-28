@@ -42,7 +42,7 @@ export default function DeleteAccountButton() {
     <>
       <button
         onClick={handleDeleteRequest}
-        className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 w-full"
+        className="bg-red-500 hover:bg-red-600 text-black font-bold py-2 px-4 rounded transition duration-300 w-full"
         disabled={isDeleting}
       >
         {isDeleting ? '削除中...' : 'アカウントを削除'}
@@ -56,13 +56,13 @@ export default function DeleteAccountButton() {
             <div className="flex justify-end space-x-4">
               <button
                 onClick={handleCancelDelete}
-                className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+                className="bg-gray-500 hover:bg-gray-600 text-black font-bold py-2 px-4 rounded transition duration-300"
               >
                 キャンセル
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+                className="bg-red-500 hover:bg-red-600 text-black font-bold py-2 px-4 rounded transition duration-300"
               >
                 削除する
               </button>

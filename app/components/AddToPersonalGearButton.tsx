@@ -106,7 +106,7 @@ export default function AddToPersonalGearButton({
     <button
       onClick={handleAddToPersonalGear}
       disabled={isLoading}
-      className={`text-xs bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 disabled:bg-green-300 transition-colors ${className || ''}`}
+      className={`text-xs bg-green-500 py-1 px-2 rounded hover:bg-green-600 disabled:bg-green-300 transition-colors ${className || ''}`}
     >
       {isLoading ? '追加中...' : '所有ギアに追加'}
     </button>

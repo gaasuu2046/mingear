@@ -76,7 +76,7 @@ export default function AddToPackingListButton({ gearId, type, className }:  Add
     <button
       onClick={handleAddToPackingList}
       disabled={isLoading}
-      className={`text-xs bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-600 disabled:bg-blue-300 transition-colors ${className || ''}`}
+      className={`text-xs bg-blue-500 py-1 px-2 rounded hover:bg-blue-600 disabled:bg-blue-300 transition-colors ${className || ''}`}
     >
       {isLoading ? 'Adding...' : 'パッキングリストに追加'}
     </button>

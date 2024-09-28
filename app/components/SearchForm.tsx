@@ -32,7 +32,7 @@ export default function SearchForm() {
         placeholder="カテゴリー"
         className="border p-2 rounded"
       /> */}
-      <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+      <button type="submit" className="bg-blue-500 text-black p-2 rounded">
         検索
       </button>
     </form>

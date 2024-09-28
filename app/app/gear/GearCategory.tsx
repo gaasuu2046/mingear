@@ -53,13 +53,13 @@ export default function GearCategory({
                     className="transition-transform h-32 sm:h-48 duration-300 hover:scale-105"
                   />
                 </div>
-                <p className="text-white">
+                <p className="text-black">
                   {new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(gear.price ?? 0)}
                 </p>
-                <p className="text-white ml-1">{gear.weight}g</p>
+                <p className="text-black ml-1">{gear.weight}g</p>
                 <div className="flex items-center">
                   <StarIcon className="h-5 w-5 text-yellow-400" />
-                  <p className="text-white">
+                  <p className="text-black">
                     {gear.avgRating?.toFixed(2) ?? '0'}
                   </p>
                 </div>
@@ -88,12 +88,12 @@ export default function GearCategory({
       </div>
       <div className="flex justify-center space-x-2 mt-4">
         {pageNumber > 1 && (
-          <button onClick={() => handlePageChange(pageNumber - 1)} className="px-4 py-2 bg-blue-500 text-white rounded">
+          <button onClick={() => handlePageChange(pageNumber - 1)} className="px-4 py-2 bg-blue-500 text-black rounded">
             前のページ
           </button>
         )}
         {pageNumber < totalPages && (
-          <button onClick={() => handlePageChange(pageNumber + 1)} className="px-4 py-2 bg-blue-500 text-white rounded">
+          <button onClick={() => handlePageChange(pageNumber + 1)} className="px-4 py-2 bg-blue-500 text-black rounded">
             次のページ
           </button>
         )}

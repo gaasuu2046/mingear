@@ -58,7 +58,7 @@ export const SearchSuggestionComponent: React.FC<SearchSuggestionComponentProps>
                 <img src={gear.img} alt={gear.name} className="w-8 h-8" />
                 <button
                   onClick={() => onAddGear(gear)}
-                  className="bg-blue-500 text-white py-1 px-2 rounded text-sm hover:bg-blue-600"
+                  className="bg-blue-500 text-black py-1 px-2 rounded text-sm hover:bg-blue-600"
                 >
                   {buttonTxt}
                 </button>

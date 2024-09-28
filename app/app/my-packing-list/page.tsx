@@ -2,11 +2,9 @@ import Link from 'next/link'
 import { Session } from "next-auth"
 import { getServerSession } from 'next-auth/next'
 
-import PackingListClient from '@/components/PackingListClient'
+import PackingListClientWrapper from '@/app/my-packing-list/PackingListClientWrapper'
 import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
-
-
 
 async function getPackingList(userId: string) {
   const packingList = await prisma.packingList.findMany({
@@ -14,22 +12,15 @@ async function getPackingList(userId: string) {
     include: {
       items: {
         include: {
-          gear: {
-            include: {
-              category: true
-            }
-          },
-          personalGear: {
-            include: {
-              category: true
-            }
-          }
-        }
+          gear: true,
+          personalGear: true
+        },
       },
       trip: true,
       user: true,
       likes: true
-    }
+    },
+    orderBy: { createdAt: 'desc' }
   });
   return packingList
 }
@@ -53,20 +44,7 @@ export default async function MyPackingList() {
     )
   }
 
-  const packingList = await getPackingList(session.user.id)
-  const totalWeight = packingList.reduce((acc, item) => 
-    acc + (item.gear?.weight || item.personalGear?.weight || 0), 0
-  )
+  const initialPackingList = await getPackingList(session.user.id)
 
-  // ギアをカテゴリ毎にグループ化
-  const gearByCategory = packingList.reduce((acc, item) => {
-    const category = item.gear?.category?.name || item.personalGear?.category?.name || '未分類'
-    if (!acc[category]) {
-      acc[category] = []
-    }
-    acc[category].push(item)
-    return acc
-  }, {} as Record<string, typeof packingList>)
-
-  return <PackingListClient initialPackingLists={packingList} />
+  return <PackingListClientWrapper initialPackingLists={initialPackingList} userId={session.user.id} />
 }

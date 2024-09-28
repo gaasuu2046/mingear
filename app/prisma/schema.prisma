@@ -59,7 +59,6 @@
   model PackingList {
     id        Int               @id @default(autoincrement())
     userId    String
-    gearId    Int?
     createdAt DateTime          @default(now())
     name      String            @default("")
     detail    String?
@@ -83,6 +82,7 @@
   model PackingListItem {
     id             Int           @id @default(autoincrement())
     packingListId  Int
+    altName        String?
     gearId         Int?
     personalGearId Int?
     quantity       Int           @default(1)

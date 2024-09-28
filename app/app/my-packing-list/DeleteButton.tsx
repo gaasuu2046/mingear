@@ -45,7 +45,7 @@ export default function DeleteButton({ id,className }: DeleteButtonProps) {
 
   return (
     <button
-      className={`bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors disabled:bg-red-300 w-full ${className}`}
+      className={`bg-red-500 text-black rounded-md hover:bg-red-600 transition-colors disabled:bg-red-300 w-full ${className}`}
       onClick={handleDelete}
       disabled={isDeleting}
     >

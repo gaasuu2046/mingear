@@ -14,13 +14,31 @@ export async function POST(request: Request, { params }: { params: { id: string 
   const packingListId = parseInt(params.id)
 
   try {
-    const like = await prisma.packingListLike.create({
-      data: {
-        userId: session.user.id,
-        packingListId,
+    // アプローチ2: いいねの切り替え
+    const existingLike = await prisma.packingListLike.findUnique({
+      where: {
+        userId_packingListId: {
+          userId: session.user.id,
+          packingListId,
+        },
       },
     })
 
+    let like
+    if (existingLike) {
+      like = await prisma.packingListLike.delete({
+        where: {
+          id: existingLike.id,
+        },
+      })
+    } else {
+      like = await prisma.packingListLike.create({
+        data: {
+          userId: session.user.id,
+          packingListId,
+        },
+      })
+    }
     return NextResponse.json(like, { status: 201 })
   } catch (error) {
     console.error(error)

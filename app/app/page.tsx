@@ -1,10 +1,10 @@
 // app/page.tsx
-import GearList from '@/app/gear/page'
+import MyPackingList from '@/app/my-packing-list/page'
 
 export default function Home() {
   return (
     <div>
-      <GearList searchParams={{}} />
+      <MyPackingList />
     </div>
   )
 }

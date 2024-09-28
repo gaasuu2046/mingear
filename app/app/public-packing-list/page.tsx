@@ -7,6 +7,7 @@ import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 
 async function getPublicPackingLists() {
+  
   return await prisma.packingList.findMany({
     include: { 
       user: {
@@ -19,6 +20,7 @@ async function getPublicPackingLists() {
           personalGear: true,
         },
       },
+      likes: true,
       _count: {
         select: { likes: true },
       },
@@ -32,8 +34,15 @@ async function getPublicPackingLists() {
   })
 }
 
+
 export default async function PublicPackingLists() {
   const session = await getServerSession(authOptions)
+  const currentUserId = session?.user?.id
   const packingLists = await getPublicPackingLists()
-  return <PublicPackingListsClient packingLists={packingLists} currentUserId={session?.user?.id} />
+  const packingListsWithLikeStatus = packingLists.map(list => ({
+    ...list,
+    isLikedByCurrentUser: list.likes.some(like => like.userId === currentUserId)
+  }))
+  
+  return <PublicPackingListsClient packingLists={packingListsWithLikeStatus} currentUserId={session?.user?.id} />
 }

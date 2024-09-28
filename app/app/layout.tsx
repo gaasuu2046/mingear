@@ -33,16 +33,16 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions) as Session | null
   return (
     <html lang="ja" className="h-full">
-      <body className={`${inter.className} flex flex-col min-h-screen bg-gray-900 text-gray-100`}>
+      <body className={`${inter.className} flex flex-col min-h-screen bg-gray-900 text-gray-800`}>
         <Providers>
-          <header className="bg-gray-800 shadow-lg">
+          <header className="bg-gray-800 text-gray-100 shadow-lg">
           <nav className="container mx-auto px-1 py-2 sm:px-2 sm:py-3 w-full sm:w-11/12 md:w-10/12 lg:w-9/12 xl:w-8/12">
             <div className="flex flex-col sm:flex-row justify-between items-center">
                 <h1 className="text-2xl mb-0 sm:mb-0 text-green-400">Rate Your Own Gear!</h1>
                 <ul className="flex text-xs sm:text-sm whitespace-nowrap">
-                  <NavItem href="/" icon={<GrCatalog />} text="ギアカタログ" />
-                  {/* <NavItem href="/gear" icon={<FaList />} text="ギア一覧" /> */}
+                  <NavItem href="/gear" icon={<GrCatalog />} text="ギアカタログ" />
                   <NavItem href="/my-packing-list" icon={<FaListAlt />} text="パッキングリスト" />
+                  <NavItem href="/public-packing-list" icon={<GrCatalog />} text="みんなのパッキング" />
                   <NavItem href="/my-gear" icon={<FaList />} text="所有ギア" />
                   <NavItem href="/gear/register" icon={<FaPlusCircle />} text="ギア登録" />
                   <NavItem href="/reviews" icon={<FaStar />} text="レビュー" />
@@ -50,11 +50,11 @@ export default async function RootLayout({
                 <div className="flex items-center space-x-4">
                   <UserInfo session={session} />
                   {session ? (
-                    <Link href="/auth/profile" className="text-gray-300 hover:text-white">
+                    <Link href="/auth/profile" className="text-gray-300 hover:text-black">
                       <FaUser />
                     </Link>
                   ) : (
-                    <Link href="/auth/signin" className="text-gray-300 hover:text-white">
+                    <Link href="/auth/signin" className="text-gray-300 hover:text-black">
                       ログイン
                     </Link>
                   )}

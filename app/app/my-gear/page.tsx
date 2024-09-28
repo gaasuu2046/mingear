@@ -31,7 +31,7 @@ export default async function MyGearPage() {
           <p className="mb-6">所有ギア一覧を表示するにはログインしてください。</p>
           <Link 
             href="/auth/signin" 
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+            className="bg-blue-500 hover:bg-blue-600 text-black font-bold py-2 px-4 rounded transition duration-300"
           >
             ログインページへ
           </Link>

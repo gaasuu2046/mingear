@@ -45,11 +45,11 @@ export default function SignIn() {
         <div className="flex justify-center">
           <Image src="/logo.png" alt="Logo" width={150} height={50} />
         </div>
-        <h3 className="text-2xl font-bold text-white text-center">ログイン</h3>
+        <h3 className="text-2xl font-bold text-black text-center">ログイン</h3>
         <div className="mt-4">
           <button
             onClick={handleGoogleSignIn}
-            className="w-full px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 flex items-center justify-center"
+            className="w-full px-4 py-2 text-black bg-red-600 rounded-lg hover:bg-red-700 flex items-center justify-center"
           >
             <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
               <path
@@ -67,7 +67,7 @@ export default function SignIn() {
               <input
                 type="text"
                 placeholder="メールアドレス"
-                className="w-full px-4 py-2 mt-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                className="w-full px-4 py-2 mt-2 border border-gray-600 bg-gray-700 text-black rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -78,14 +78,14 @@ export default function SignIn() {
               <input
                 type="password"
                 placeholder="パスワード"
-                className="w-full px-4 py-2 mt-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                className="w-full px-4 py-2 mt-2 border border-gray-600 bg-gray-700 text-black rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
             <div className="flex items-baseline justify-between">
-              <button className="px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-700">ログイン</button>
+              <button className="px-6 py-2 mt-4 text-black bg-blue-600 rounded-lg hover:bg-blue-700">ログイン</button>
               <Link href="/auth/signup" className="text-sm text-blue-400 hover:underline">新規登録はこちら</Link>
             </div>
           </div>

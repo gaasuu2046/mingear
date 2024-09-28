@@ -163,7 +163,7 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
     <div>
       <button
         onClick={() => setShowAddForm(true)}
-        className="mb-6 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+        className="mb-6 bg-green-500 text-black py-2 px-4 rounded hover:bg-green-600"
       >
         所有ギアを登録
       </button>
@@ -286,7 +286,7 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
             
             <button 
               type="submit"
-              className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"
+              className="w-full bg-blue-500 text-black py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"
             >
               登録
             </button>

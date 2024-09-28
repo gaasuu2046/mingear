@@ -29,7 +29,7 @@ export default function CategoryNav({ categories, selectedCategory }: { categori
           key={category}
           className={`px-2 py-2 rounded-full ${
             selectedCategory === category
-              ? 'bg-blue-500 text-white'
+              ? 'bg-blue-500 text-black'
               : 'bg-gray-200 text-gray-700'
           }`}
           onClick={() => handleCategoryClick(category)}

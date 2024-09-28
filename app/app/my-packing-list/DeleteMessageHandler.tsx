@@ -22,7 +22,7 @@ export default function DeleteMessageHandler() {
   if (!message) return null
 
   return (
-    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 z-50 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg">
+    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 z-50 bg-red-500 text-black px-4 py-2 rounded-md shadow-lg">
       {message}
     </div>
   )

@@ -14,7 +14,7 @@ export default async function ProfilePage() {
         <div className="text-center p-8 bg-gray-800 rounded-lg shadow-xl">
           <h1 className="text-2xl font-bold mb-4">アクセスが拒否されました</h1>
           <p className="mb-4">このページを表示するにはログインが必要です。</p>
-          <Link href="/auth/signin" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+          <Link href="/auth/signin" className="bg-blue-500 hover:bg-blue-600 text-black font-bold py-2 px-4 rounded transition duration-300">
             ログインページへ
           </Link>
         </div>
@@ -40,7 +40,7 @@ export default async function ProfilePage() {
         <div className="flex flex-col space-y-4">
           <Link 
             href="/api/auth/signout" 
-            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 text-center"
+            className="bg-red-500 hover:bg-red-600 text-black font-bold py-2 px-4 rounded transition duration-300 text-center"
           >
             ログアウト
           </Link>

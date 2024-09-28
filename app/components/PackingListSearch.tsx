@@ -69,7 +69,7 @@
 //               <span>{gear.name} ({gear.type === 'public' ? '公開' : '個人'})</span>
 //               <button
 //                 onClick={() => handleAddToPackingList(gear.id, gear.type)}
-//                 className="bg-blue-500 text-white px-2 py-1 rounded"
+//                 className="bg-blue-500 text-black px-2 py-1 rounded"
 //               >
 //                 追加
 //               </button>
