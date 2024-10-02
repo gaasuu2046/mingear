@@ -62,11 +62,10 @@
     createdAt DateTime          @default(now())
     name      String            @default("")
     detail    String?
-    tripId    Int?
     updatedAt DateTime          @default(now()) @updatedAt
     season    Season            @default(UNSPECIFIED)
-    trip      Trip?             @relation(fields: [tripId], references: [id])
     user      User              @relation(fields: [userId], references: [id])
+    trips     Trip[]          
     items     PackingListItem[]
     likes     PackingListLike[]
   }
@@ -92,17 +91,20 @@
   }
 
   model Trip {
-    id           Int           @id @default(autoincrement())
-    name         String
-    detail       String?
-    ptid         String?
-    elevation    Int?
-    lat          Float?
-    lon          Float?
-    userId       String
-    area         String?
-    packingLists PackingList[]
-    user         User          @relation(fields: [userId], references: [id])
+    id            Int           @id @default(autoincrement())
+    packingListId Int
+    name          String
+    detail        String?
+    ptid          String?
+    elevation     Int?
+    lat           Float?
+    lon           Float?
+    userId        String
+    area          String?
+    startDate     DateTime
+    endDate       DateTime
+    packingList   PackingList   @relation(fields: [packingListId], references: [id])
+    user          User          @relation(fields: [userId], references: [id])
   }
 
   model PackingListLike {

@@ -6,6 +6,7 @@ import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 
+import { SEASONS, Season } from '@/app/types/season'
 interface PackingList {
   id: number;
   name: string;
@@ -21,7 +22,7 @@ interface PackingList {
       brand?: { name: string };
     } | null;
   }[];
-  season: string;
+  season: Season;
   userId: string;
   _count: { likes: number };
   isLikedByCurrentUser: boolean;
@@ -32,18 +33,15 @@ interface PublicPackingListsClientProps {
   currentUserId: string | undefined;
 }
 
-const seasons = [
-  { ja: '春', en: 'SPRING' },
-  { ja: '夏', en: 'SUMMER' },
-  { ja: '秋', en: 'AUTUMN' },
-  { ja: '冬', en: 'WINTER' },
-];
-
 export default function PublicPackingListsClient({ packingLists: initialPackingLists, currentUserId }: PublicPackingListsClientProps) {
   const [packingLists, setPackingLists] = useState(initialPackingLists);
   const [filteredLists, setFilteredLists] = useState(initialPackingLists);
   const [selectedSeason, setSelectedSeason] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+
+  const getJapaneseSeason = (englishSeason: Season) => {
+    return SEASONS.find(s => s.en === englishSeason)?.ja || englishSeason;
+  };
 
   const handleLike = async (listId: number) => {
     const response = await fetch(`/api/packing-list/${listId}/like`, {
@@ -69,7 +67,7 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
   useEffect(() => {
     let result = packingLists;
     if (selectedSeason) {
-      const englishSeason = seasons.find(s => s.ja === selectedSeason)?.en;
+      const englishSeason = SEASONS.find(s => s.ja === selectedSeason)?.en;
       result = result.filter(list => list .season === englishSeason);
     }
     if (searchTerm) {
@@ -85,9 +83,6 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
     setFilteredLists(result);
   }, [selectedSeason, searchTerm, packingLists]);
 
-  const getJapaneseSeason = (englishSeason: string) => {
-    return seasons.find(s => s.en === englishSeason)?.ja || englishSeason;
-  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -103,7 +98,7 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
             className="border rounded-md px-2 py-1"
           >
             <option value="">全て</option>
-            {seasons.map(season => (
+            {SEASONS.map(season => (
               <option key={season.en} value={season.ja}>{season.ja}</option>
             ))}
           </select>
@@ -163,7 +158,7 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
                   )}
                   <span className="text-sm font-semibold">{list._count.likes}</span>
                 </div>
-                <Link href={`/packing-list/${list.id}`} className="btn btn-primary">
+                <Link href={`/public-packing-list/${list.id}`} className="btn btn-primary">
                   詳細を見る
                 </Link>
               </div>

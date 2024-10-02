@@ -40,9 +40,9 @@ export default async function RootLayout({
             <div className="flex flex-col sm:flex-row justify-between items-center">
                 <h1 className="text-2xl mb-0 sm:mb-0 text-green-400">Rate Your Own Gear!</h1>
                 <ul className="flex text-xs sm:text-sm whitespace-nowrap">
-                  <NavItem href="/gear" icon={<GrCatalog />} text="ギアカタログ" />
-                  <NavItem href="/my-packing-list" icon={<FaListAlt />} text="パッキングリスト" />
+                  <NavItem href="/my-packing-list" icon={<FaListAlt />} text="マイパッキング" />
                   <NavItem href="/public-packing-list" icon={<GrCatalog />} text="みんなのパッキング" />
+                  <NavItem href="/gear" icon={<GrCatalog />} text="ギアレビュー" />
                   <NavItem href="/my-gear" icon={<FaList />} text="所有ギア" />
                   <NavItem href="/gear/register" icon={<FaPlusCircle />} text="ギア登録" />
                   <NavItem href="/reviews" icon={<FaStar />} text="レビュー" />

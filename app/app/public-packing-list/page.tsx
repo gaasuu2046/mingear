@@ -13,7 +13,7 @@ async function getPublicPackingLists() {
       user: {
         select: { name: true, image: true },
       },
-      trip: true,
+      trips: true,
       items: {
         include: {
           gear: {
