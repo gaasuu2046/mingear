@@ -36,26 +36,7 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
   const [suggestions, setSuggestions] = useState<{ [key: number]: Gear[] }>({})
   const [appElement, setAppElement] = useState<HTMLElement | null>(null);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setAppElement(document.body);
-    }
-    fetchCategories()
-  }, [])
-
-  useEffect(() => {
-    if (categories.length > 0) {
-      const initialGearInputs = categories.reduce((acc, category) => {
-        const categoryGears = existingGears.filter(gear => gear.categoryId === category.id);
-        acc[category.id] = categoryGears.length > 0 
-          ? categoryGears 
-          : [{ name: '', weight: 0, quantity: 1, type: 'personal', categoryId: category.id }];
-        return acc;
-      }, {} as { [key: number]: Gear[] });
-      setGearInputs(initialGearInputs);
-    }
-  }, [categories, existingGears]);
-
+  
   const fetchCategories = useCallback(async () => {
     try {
       const response = await fetch('/api/categories')
@@ -68,6 +49,26 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
       console.error('Error fetching categories:', error)
     }
   }, [])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setAppElement(document.body);
+    }
+    fetchCategories()
+  }, [fetchCategories])
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      const initialGearInputs = categories.reduce((acc, category) => {
+        const categoryGears = existingGears.filter(gear => gear.categoryId === category.id);
+        acc[category.id] = categoryGears.length > 0 
+          ? categoryGears 
+          : [{ id: 0, name: '', weight: 0, quantity: 1, type: 'personal', categoryId: category.id, description: '', img: '', price: 0, productUrl: '', brandId: 0, avgRating: 0, reviewCount: 0 }];
+        return acc;
+      }, {} as { [key: number]: Gear[] });
+      setGearInputs(initialGearInputs);
+    }
+  }, [categories, existingGears]);
 
   const fetchSuggestions = useCallback(async (query: string, categoryId: number) => {
     try {
@@ -116,8 +117,23 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
 
   const handleAddGear = useCallback((categoryId: number) => {
     setGearInputs(prevInputs => {
-      const updatedGears = [...prevInputs[categoryId], { name: '', weight: 0, quantity: 1, type: 'personal' as const, categoryId }]
-      return { ...prevInputs, [categoryId]: updatedGears }
+      const newGear: Gear = { 
+        id: 0, 
+        name: '', 
+        weight: 0, 
+        quantity: 1, 
+        type: 'personal', 
+        categoryId, 
+        description: '', 
+        img: '', 
+        price: 0, 
+        productUrl: '', 
+        brandId: 0, 
+        avgRating: 0, 
+        reviewCount: 0 
+      };
+      const updatedGears = [...prevInputs[categoryId], newGear];
+      return { ...prevInputs, [categoryId]: updatedGears };
     })
   }, [])
 
@@ -179,7 +195,7 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
                 className="p-2 border rounded"
               />
               <div className="p-2 border rounded bg-gray-100">
-                {gear.weight * gear.quantity}
+                {gear.weight * (gear.quantity ?? 1)}
               </div>
               <button
                 onClick={() => handleRemoveGear(category.id, index)}

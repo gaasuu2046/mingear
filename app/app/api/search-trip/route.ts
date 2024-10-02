@@ -1,8 +1,30 @@
 // app/api/search-trip/route.ts
 import { NextResponse } from 'next/server';
 
+interface YamarecoPoiResponse {
+  poilist?: YamarecoPoi[];
+}
+
+interface YamarecoPoi {
+  ptid: string;
+  name: string;
+  elevation: string;
+  lat: string;
+  lon: string;
+  area: string;
+}
+
+interface FormattedPoi {
+  ptid: string;
+  name: string;
+  elevation: number;
+  lat: number;
+  lon: number;
+  area: string;
+}
+
 export async function POST(request: Request) {
-  const { tripName } = await request.json();
+  const { tripName }: { tripName: string } = await request.json();
   
   const response = await fetch('https://api.yamareco.com/api/v1/searchPoi', {
     method: 'POST',
@@ -10,10 +32,10 @@ export async function POST(request: Request) {
     body: new URLSearchParams({ page: '1', type_id: '0', name: tripName }),
   });
   
-  const data = await response.json();
+  const data: YamarecoPoiResponse = await response.json();
   
   if (data.poilist && data.poilist.length > 0) {
-    const poiList = data.poilist.slice(0,5).map(poi => ({
+    const poiList: FormattedPoi[] = data.poilist.slice(0, 5).map(poi => ({
       ptid: poi.ptid,
       name: poi.name,
       elevation: parseInt(poi.elevation),
@@ -23,6 +45,6 @@ export async function POST(request: Request) {
     }));
     return NextResponse.json(poiList);
   } else {
-    return NextResponse.json([], { status: 200 });
+    return NextResponse.json([] as FormattedPoi[], { status: 200 });
   }
 }

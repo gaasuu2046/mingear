@@ -1,11 +1,34 @@
 import React from 'react';
 
-const PackingListDisplay = ({ packingList }) => {
+interface Gear {
+  name: string;
+  weight: number;
+}
+
+interface Item {
+  id: number;
+  gear: Gear;
+  quantity: number;
+}
+
+interface Trip {
+  name: string;
+  area: string;
+  season: string;
+}
+
+interface PackingList {
+  name: string;
+  trip: Trip;
+  items: Item[];
+}
+
+const PackingListDisplay: React.FC<{ packingList: PackingList }> = ({ packingList }) => {
   if (!packingList || !packingList.items) {
     return <div>パッキングリストが見つかりません。</div>;
   }
 
-  const totalWeight = packingList.items.reduce((acc: number, item: { gear: { weight: any; }; quantity: number; }) => {
+  const totalWeight = packingList.items.reduce((acc: number, item: { gear: { weight: number; }; quantity: number; }) => {
     return acc + (item.gear?.weight || 0) * item.quantity;
   }, 0);
 

@@ -24,8 +24,8 @@ interface PackingList {
   }>;
   userId: string;
   likes: { id: number }[];
-  isLikedByCurrentUser: boolean;
-  tripId: number | null;
+  isLikedByCurrentUser?: boolean;
+  tripId?: number | null;
 }
 
 interface PackingListDetailProps {

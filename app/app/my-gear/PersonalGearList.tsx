@@ -34,7 +34,6 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
   const [price, setPrice] = useState('')
   const [productUrl, setProductUrl] = useState('')
   const [categories, setCategories] = useState<{ id: string, name: string }[]>([])
-  const [suggestions, setSuggestions] = useState<Gear[]>([])
   const [newBrand, setNewBrand] = useState('');
   const [isNewBrand, setIsNewBrand] = useState(false);
   const [brands, setBrands] = useState<{ id: string, name: string }[]>([]);
@@ -145,7 +144,6 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
     setImg('')
     setPrice('')
     setProductUrl('')
-    setSuggestions([])
     setShowAddForm(false)
   }
 

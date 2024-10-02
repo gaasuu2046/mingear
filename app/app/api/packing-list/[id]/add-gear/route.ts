@@ -33,7 +33,7 @@ export async function POST(
     }
 
     // ギアをパッキングリストに追加
-    const newItem = await prisma.packingListItem.create({
+    await prisma.packingListItem.create({
       data: {
         packingListId,
         gearId,

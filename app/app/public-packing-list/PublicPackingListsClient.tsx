@@ -4,28 +4,55 @@
 import { HeartIcon } from '@heroicons/react/24/outline'
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Key } from 'react'
 
 import { SEASONS, Season } from '@/app/types/season'
+
 interface PackingList {
   id: number;
   name: string;
-  user: { name: string };
-  trip?: { name: string };
+  detail: string | null; // undefined を null に変更
+  user: { 
+    name: string | null;
+    image: string | null;
+  };
+  trips: { // trip を trips に変更し、配列にする
+    id: number;
+    packingListId: number;
+    name: string;
+    detail: string | null;
+    ptid: string | null;
+    elevation: number | null;
+    lat: number | null;
+    lon: number | null;
+    area: string | null;
+    startDate: Date;
+    endDate: Date;
+  }[];
   items: {
+    id: Key | null | undefined;
     gear?: {
       name: string;
       brand?: { name: string };
+      img?: string | null;
+      weight?: number;
     } | null;
     personalGear?: {
       name: string;
       brand?: { name: string };
+      img?: string | null;
+      weight?: number;
     } | null;
+    quantity: number;
   }[];
   season: Season;
   userId: string;
   _count: { likes: number };
   isLikedByCurrentUser: boolean;
+  createdAt: string;
+  updatedAt: string;
+  likes: { id: number }[];
+  tripId?: number | null;
 }
 
 interface PublicPackingListsClientProps {
@@ -73,8 +100,8 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
     if (searchTerm) {
       result = result.filter(list => 
         list.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        list.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        list.trip?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        list.user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        list.trips.some(trip => trip.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
         list.items.some(
           item => item.gear?.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
           item.gear?.brand?.name.toLowerCase().includes(searchTerm.toLowerCase())) 
@@ -120,7 +147,7 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
             <div className="card-body">
               <h2 className="card-title">{list.name}</h2>
               <p className="card-text">作成者: {list.user.name}</p>
-              <p className="card-text">山行: {list.trip?.name || '未設定'}</p>
+              <p className="card-text">山行: {list.trips.map(trip => trip.name).join(', ') || '未設定'}</p>
               <p className="card-text">シーズン: {getJapaneseSeason(list.season)}</p>
               <div className="mt-4">
                 <p className="font-semibold">ギア一覧:</p>
@@ -129,8 +156,8 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
                     <li key={item.id} className="flex items-center">
                       {(item.gear?.img || item.personalGear?.img) && (
                         <img 
-                          src={item.gear?.img || item.personalGear?.img} 
-                          alt={item.gear?.name || item.personalGear?.name} 
+                        src={(item.gear?.img ?? undefined) || (item.personalGear?.img ?? undefined)}
+                        alt={item.gear?.name || item.personalGear?.name} 
                           className="w-8 h-8 object-cover mr-3 rounded-sm" 
                         />
                       )}

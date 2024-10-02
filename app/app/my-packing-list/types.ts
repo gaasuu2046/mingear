@@ -6,15 +6,6 @@ export interface Category {
   name: string;
 }
 
-export interface Gear {
-  id?: number;
-  name: string;
-  weight: number;
-  quantity: number;  // quantity を追加
-  type: 'public' | 'personal';
-  categoryId: number;
-}
-
 export interface Trip {
   id: number;
   name: string;
@@ -30,23 +21,56 @@ export interface Trip {
   user: User;
 }
 
+export interface Gear {
+  id: number;
+  name: string;
+  description: string;
+  img: string;
+  price: number | null;
+  productUrl: string | null;
+  weight: number;
+  brandId: number;
+  categoryId: number;
+  avgRating: number | null;
+  reviewCount: number;
+  quantity?: number;
+  type?: 'public' | 'personal';
+}
+
+export interface PersonalGear {
+  id: number;
+  userId: string;
+  name: string;
+  weight: number;
+  categoryId: number;
+  img: string | null;
+  price: number | null;
+  productUrl: string | null;
+  brandId: number | null;
+  gearId: number | null;
+  description?: string;
+  avgRating?: number | null;
+  reviewCount?: number;
+}
+
 export interface PackingListItem {
   id: number;
   gear?: Gear;
-  personalGear?: Gear;
+  personalGear?: PersonalGear;
   quantity: number;
+  type: 'public' | 'personal';
 }
 
 export interface PackingList {
   id: number;
   name: string;
   detail?: string;
-  season: string;
+  season: Season;
   createdAt: string;
   updatedAt: string;
   items: PackingListItem[];
   likes: { id: number }[];
-  tripId?: number | null;  // 旅程との紐づけ
+  tripId?: number | null;
 }
 
 export type Season = 'SPRING' | 'SUMMER' | 'AUTUMN' | 'WINTER' | 'UNSPECIFIED';

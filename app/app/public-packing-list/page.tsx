@@ -45,8 +45,10 @@ export default async function PublicPackingLists() {
   const packingLists = await getPublicPackingLists()
   const packingListsWithLikeStatus = packingLists.map(list => ({
     ...list,
-    isLikedByCurrentUser: list.likes.some(like => like.userId === currentUserId)
+    isLikedByCurrentUser: list.likes.some(like => like.userId === currentUserId),
+    createdAt: list.createdAt.toISOString(),
+    updatedAt: list.updatedAt.toISOString()
   }))
   
-  return <PublicPackingListsClient packingLists={packingListsWithLikeStatus} currentUserId={session?.user?.id} />
+  return <PublicPackingListsClient packingLists={packingListsWithLikeStatus} currentUserId={currentUserId} />
 }

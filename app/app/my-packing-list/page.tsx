@@ -5,12 +5,13 @@ import { getServerSession } from 'next-auth/next'
 import { PackingList, Trip } from './types' // PackingListの型をインポート
 
 import PackingListClientWrapper from '@/app/my-packing-list/PackingListClientWrapper'
+import { Season } from '@/app/types/season'
 import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 
 async function getPackingList(userId: string): Promise<PackingList[]> {
   try {
-    const packingList = await prisma.packingList.findMany({
+    const packingListRaw = await prisma.packingList.findMany({
       where: { userId },
       include: {
         items: {
@@ -30,6 +31,25 @@ async function getPackingList(userId: string): Promise<PackingList[]> {
       },
       orderBy: { createdAt: 'desc' }
     });
+
+    // prismaの返り値をPackingList型に変換
+    const packingList: PackingList[] = packingListRaw.map(list => ({
+      id: list.id,
+      name: list.name,
+      detail: list.detail || undefined,
+      season: list.season as Season,
+      createdAt: list.createdAt.toISOString(),
+      updatedAt: list.updatedAt.toISOString(),
+      items: list.items.map(item => ({
+        id: item.id,
+        gear: item.gear ? { ...item.gear } : undefined,
+        personalGear: item.personalGear ? { ...item.personalGear } : undefined,
+        quantity: item.quantity,
+        type: item.gear ? 'public' : 'personal'
+      })),
+      likes: list.likes.map(like => ({ id: like.id })),
+    }));
+
     return packingList;
   } catch (error) {
     console.error('Failed to fetch packing lists:', error);

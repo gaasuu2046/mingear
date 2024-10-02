@@ -2,10 +2,21 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
-const GearSelector = ({ gears, onAddGear }) => {
-  const { register, handleSubmit } = useForm();
+interface Gear {
+  id: number;
+  name: string;
+  weight: number;
+}
 
-  const onSubmit = (data) => {
+interface GearSelectorProps {
+  gears: Gear[];
+  onAddGear: (data: { gearId: number; quantity: number }) => void;
+}
+
+const GearSelector: React.FC<GearSelectorProps> = ({ gears, onAddGear }) => {
+  const { register, handleSubmit } = useForm<{ gearId: number; quantity: number }>();
+
+  const onSubmit = (data: { gearId: number; quantity: number; }) => {
     onAddGear(data);
   };
 

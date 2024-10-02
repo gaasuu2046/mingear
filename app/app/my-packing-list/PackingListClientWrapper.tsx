@@ -21,8 +21,7 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
   const [selectedList, setSelectedList] = useState<PackingList | null>(null)
   const [isGearModalOpen, setIsGearModalOpen] = useState(false)
   const [isFormModalOpen, setIsFormModalOpen] = useState(false)
-  const [showReviewForm, setShowReviewForm] = useState(false)
-  const [gearsToReview, setGearsToReview] = useState<Gear[]>([])
+  // const [gearsToReview, setGearsToReview] = useState<Gear[]>([])
 
   const handleNewList = () => {
     setSelectedList(null)
@@ -92,44 +91,52 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
         )
       );
 
-      setIsModalOpen(false);
-      setGearsToReview(newGears.filter(gear => gear.type === 'public'));
-      setShowReviewForm(true);
+      setIsGearModalOpen(false);
+      // setGearsToReview(newGears.filter(gear => gear.type === 'public'));
+      // setShowReviewForm(true);
+      
     } catch (error) {
       console.error('Error adding gears to packing list:', error);
     }
   }
 
-  const handleReviewSubmit = async (gearId: number, rating: number, comment: string) => {
-    try {
-      await fetch(`/api/gear/${gearId}/review`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ rating, comment }),
-      });
+  // const handleReviewSubmit = async (gearId: number, rating: number, comment: string) => {
+  //   try {
+  //     await fetch(`/api/gear/${gearId}/review`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ rating, comment }),
+  //     });
 
-      setGearsToReview(prevGears => prevGears.filter(gear => gear.id !== gearId));
-      if (gearsToReview.length === 1) {
-        setShowReviewForm(false);
-      }
-    } catch (error) {
-      console.error('Error submitting review:', error);
-    }
-  }
+  //     setGearsToReview(prevGears => prevGears.filter(gear => gear.id !== gearId));
+  //     if (gearsToReview.length === 1) {
+  //       setShowReviewForm(false);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error submitting review:', error);
+  //   }
+  // }
 
   // 選択されたリストの既存のギアを取得する関数
   const getExistingGears = (list: PackingList): Gear[] => {
     return list.items.map(item => {
       const gear = item.gear || item.personalGear;
       return {
-        id: gear?.id,
+        id: gear?.id ?? 0, // Provide a default value of 0 if id is undefined
         name: gear?.name || '',
         weight: gear?.weight || 0,
         quantity: item.quantity,
         type: item.gear ? 'public' : 'personal',
         categoryId: gear?.categoryId || 0,
+        description: gear?.description ?? '',
+        img: gear?.img || '',
+        price: gear?.price || 0,
+        productUrl: gear?.productUrl || '',
+        brandId: gear?.brandId || 0,
+        avgRating: gear?.avgRating || 0,
+        reviewCount: gear?.reviewCount || 0,
       };
     });
   };
@@ -173,8 +180,8 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
                     <li key={item.id} className="flex items-center">
                       {(item.gear?.img || item.personalGear?.img) && (
                         <img 
-                          src={item.gear?.img || item.personalGear?.img} 
-                          alt={item.gear?.name || item.personalGear?.name} 
+                          src={(item.gear?.img ?? undefined) || (item.personalGear?.img ?? undefined)} 
+                          alt={(item.gear?.name || item.personalGear?.name) ?? ''} 
                           className="w-8 h-8 object-cover mr-3 rounded-sm" 
                         />
                       )}

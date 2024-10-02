@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth/next'
 
 import PackingListDetail from './PackingListDetail'
 
-import { SEASONS } from '@/app/types/season'
 import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 
@@ -35,6 +34,8 @@ export default async function PackingListPage({ params }: { params: { id: string
     },
   })
 
+  
+
   if (!packingList) {
     return <div>パッキングリストが見つかりません</div>
   }
@@ -48,7 +49,6 @@ export default async function PackingListPage({ params }: { params: { id: string
     <PackingListDetail
       packingList={packingList}
       trips={trips}
-      seasons={SEASONS}
       currentUserId={session.user.id}
     />
   )
