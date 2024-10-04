@@ -82,6 +82,8 @@
     id             Int           @id @default(autoincrement())
     packingListId  Int
     altName        String?
+    altWeight      Int?
+    altCategoryId  Int?
     gearId         Int?
     personalGearId Int?
     quantity       Int           @default(1)
@@ -97,8 +99,6 @@
     detail        String?
     ptid          String?
     elevation     Int?
-    lat           Float?
-    lon           Float?
     userId        String
     area          String?
     startDate     DateTime

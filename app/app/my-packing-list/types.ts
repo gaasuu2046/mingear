@@ -31,6 +31,7 @@ export interface Gear {
   weight: number;
   brandId: number;
   categoryId: number;
+  altCategoryId?: number;
   avgRating: number | null;
   reviewCount: number;
   quantity?: number;
@@ -59,6 +60,9 @@ export interface PackingListItem {
   personalGear?: PersonalGear;
   quantity: number;
   type: 'public' | 'personal';
+  altName?: string;
+  altWeight?: number;
+  altCategoryId?: number
 }
 
 export interface PackingList {

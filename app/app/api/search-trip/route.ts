@@ -1,27 +1,8 @@
 // app/api/search-trip/route.ts
 import { NextResponse } from 'next/server';
 
-interface YamarecoPoiResponse {
-  poilist?: YamarecoPoi[];
-}
+import { FormattedPoi, YamarecoPoiResponse} from '@/app/types/trips'
 
-interface YamarecoPoi {
-  ptid: string;
-  name: string;
-  elevation: string;
-  lat: string;
-  lon: string;
-  area: string;
-}
-
-interface FormattedPoi {
-  ptid: string;
-  name: string;
-  elevation: number;
-  lat: number;
-  lon: number;
-  area: string;
-}
 
 export async function POST(request: Request) {
   const { tripName }: { tripName: string } = await request.json();

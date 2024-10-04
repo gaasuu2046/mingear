@@ -1,4 +1,5 @@
 // app/my-packing-list/PackingListFormModal.tsx
+import Link from 'next/dist/client/link';
 import React, { useState, useEffect } from 'react'
 import Modal from 'react-modal'
 
@@ -110,18 +111,27 @@ export default function PackingListFormModal({ isOpen, onClose, onSubmit, packin
         </div>
         <div className="mb-4">
           <label htmlFor="tripId" className="block mb-2">旅程</label>
-          <select
-            id="tripId"
-            name="tripId"
-            value={formData.tripId || ''}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          >
-            <option value="">選択してください</option>
-            {trips.map(trip => (
-              <option key={trip.id} value={trip.id}>{trip.name}</option>
-            ))}
-          </select>
+          {trips.length > 0 ? (
+            <select
+              id="tripId"
+              name="tripId"
+              value={formData.tripId || ''}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            >
+              <option value="">選択してください</option>
+              {trips.map(trip => (
+                <option key={trip.id} value={trip.id}>{trip.name}</option>
+              ))}
+            </select>
+          ) : (
+            <div className="text-red-500 mt-2">
+              <p>旅程が登録されていません。</p>
+              <Link href="/trips/register" className="text-blue-500 underline">
+                旅程を作成する
+              </Link>
+            </div>
+          )}
         </div>
         <div className="flex justify-between">
           <button

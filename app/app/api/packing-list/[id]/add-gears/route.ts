@@ -52,7 +52,9 @@ export async function PUT(
           gearId: gear.type === 'public' ? gear.id : undefined,
           personalGearId: gear.type === 'personal' ? gear.id : undefined,
           quantity: gear.quantity || 1,
-          altName: gear.name,
+          altName: gear.type ? null : gear.name,
+          altWeight: gear.type ? null : gear.weight,
+          altCategoryId: gear.type ? null : gear.altCategoryId
         })),
       });
 

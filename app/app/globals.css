@@ -16,11 +16,6 @@
   }
 }
 
-button　{
-  cursor: pointer;
-  color:white;
-}
-
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
@@ -28,6 +23,12 @@ body {
     rgb(var(--background-start-rgb)),
     rgb(var(--background-end-rgb))
   );
+  min-height: 100vh;
+}
+
+button {
+  cursor: pointer;
+  color: white;
 }
 
 @layer utilities {
@@ -36,7 +37,6 @@ body {
   }
 }
 
-/* フォーム要素のテキストを調整 */
 @layer base {
   form,
   form input,
@@ -49,7 +49,6 @@ body {
   }
 }
 
-/* ダークモード時のフォーム要素の調整 */
 @media (prefers-color-scheme: dark) {
   form,
   form input,
@@ -65,7 +64,7 @@ body {
 
 @layer components {
   .card {
-    @apply bg-white shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg;
+    @apply bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg;
   }
 
   .card-body {
@@ -73,11 +72,11 @@ body {
   }
 
   .card-title {
-    @apply text-xl font-bold mb-2 text-gray-800;
+    @apply text-xl font-bold mb-2 text-gray-800 dark:text-gray-200;
   }
 
   .card-text {
-    @apply text-sm text-gray-600 mb-1;
+    @apply text-sm text-gray-600 dark:text-gray-400 mb-1;
   }
 
   .btn {
@@ -89,6 +88,42 @@ body {
   }
 
   .btn-secondary {
-    @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
+    @apply bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600;
+  }
+}
+
+.popup-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1000;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.popup-message.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+/* テーブルのレスポンシブデザイン */
+@media (max-width: 768px) {
+  .responsive-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .responsive-table table {
+    width: 100%;
+    min-width: 500px;
   }
 }

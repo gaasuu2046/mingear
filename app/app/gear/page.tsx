@@ -6,7 +6,7 @@ import { cache } from 'react';
 import CategoryNav from './CategoryNav';
 import GearCategory from './GearCategory';
 
-import SearchForm from '@/components/SearchForm';
+import SearchForm from '@/components/form/SearchForm';
 import prisma from '@/lib/prisma'
 
 const getCategories = cache(async () => {
@@ -26,17 +26,17 @@ async function getGearList(searchParams: {
     AND: [
       search
         ? {
-            OR: [
-              { name: { contains: search, mode: 'insensitive' } },
-              { description: { contains: search, mode: 'insensitive' } },
-              { brand: { name: { contains: search, mode: 'insensitive' } } },
-            ],
-          }
+          OR: [
+            { name: { contains: search, mode: 'insensitive' } },
+            { description: { contains: search, mode: 'insensitive' } },
+            { brand: { name: { contains: search, mode: 'insensitive' } } },
+          ],
+        }
         : {},
       { category: { name: category } },
     ],
   };
-  
+
   const [gears, totalCount] = await Promise.all([
     prisma.gear.findMany({
       where,
@@ -69,12 +69,12 @@ async function getGearList(searchParams: {
   return { gears, totalCount, pageNumber, pageSize, category };
 }
 
-export default async function GearList({ searchParams }: { 
-  searchParams: { 
+export default async function GearList({ searchParams }: {
+  searchParams: {
     search?: string;
     category?: string;
     page?: string;
-  } 
+  }
 }) {
   const [{ gears, totalCount, pageNumber, pageSize, category }, categories] = await Promise.all([
     getGearList(searchParams),
@@ -88,7 +88,7 @@ export default async function GearList({ searchParams }: {
       <SearchForm />
       <CategoryNav categories={categories.map(c => c.name)} selectedCategory={category} />
       <Suspense fallback={<div>Loading...</div>}>
-        <GearCategory 
+        <GearCategory
           category={category}
           gears={gears}
           pageNumber={pageNumber}

@@ -3,16 +3,15 @@ import { Noto_Sans_JP } from 'next/font/google'
 import Link from 'next/link'
 import { Session } from "next-auth"
 import { getServerSession } from "next-auth/next"
-import { FaList, FaListAlt, FaStar, FaUser, FaPlusCircle } from 'react-icons/fa'
+import { FaList, FaListAlt, FaUser, FaPlusCircle } from 'react-icons/fa'
+import { FaMountainSun } from "react-icons/fa6";
 import { GrCatalog } from 'react-icons/gr'
-
 
 import type { Metadata } from 'next'
 
 import { Providers } from '@/components/Providers'
 import UserInfo from '@/components/UserInfo'
-import {authOptions} from "@/lib/auth"
-
+import { authOptions } from "@/lib/auth"
 
 import './globals.css'
 
@@ -36,33 +35,44 @@ export default async function RootLayout({
       <body className={`${inter.className} flex flex-col min-h-screen bg-gray-900 text-gray-800`}>
         <Providers>
           <header className="bg-gray-800 text-gray-100 shadow-lg">
-          <nav className="container mx-auto px-1 py-2 sm:px-2 sm:py-3 w-full sm:w-11/12 md:w-10/12 lg:w-9/12 xl:w-8/12">
-            <div className="flex flex-col sm:flex-row justify-between items-center">
-                <h1 className="text-2xl mb-0 sm:mb-0 text-green-400">Rate Your Own Gear!</h1>
-                <ul className="flex text-xs sm:text-sm whitespace-nowrap">
-                  <NavItem href="/my-packing-list" icon={<FaListAlt />} text="マイパッキング" />
-                  <NavItem href="/public-packing-list" icon={<GrCatalog />} text="みんなのパッキング" />
-                  <NavItem href="/gear" icon={<GrCatalog />} text="ギアレビュー" />
-                  <NavItem href="/my-gear" icon={<FaList />} text="所有ギア" />
-                  <NavItem href="/gear/register" icon={<FaPlusCircle />} text="ギア登録" />
-                  <NavItem href="/reviews" icon={<FaStar />} text="レビュー" />
-                </ul>
-                <div className="flex items-center space-x-4">
+            <div className="container mx-auto sm:px-6 lg:px-8">
+              <nav className="flex justify-between items-center py-2">
+                <h1 className="text-xl sm:text-2xl ml-2 text-green-400">Rate Your Own Gear!</h1>
+                <div className="flex flex-wrap text-[8px] sm:text-xs gap-2 sm:gap-4">
                   <UserInfo session={session} />
                   {session ? (
-                    <Link href="/auth/profile" className="text-gray-300 hover:text-black">
+                    <Link href="/auth/profile" className="text-gray-300 hover:text-white mr-2">
                       <FaUser />
                     </Link>
                   ) : (
-                    <Link href="/auth/signin" className="text-gray-300 hover:text-black">
+                    <Link href="/auth/signin" className="text-gray-300 hover:text-white">
                       ログイン
                     </Link>
                   )}
                 </div>
-              </div>
-            </nav>
+              </nav>
+              <nav className="relative">
+                <div className="overflow-x-auto">
+                  <ul className="flex text-xs sm:text-sm gap-4 sm:gap-4" style={{ width: 'max-content' }}>
+                    {[
+                      { href: "/public-packing-list", icon: <GrCatalog />, text: "みんなのパッキング" },
+                      { href: "/my-packing-list", icon: <FaListAlt />, text: "マイパッキング" },
+                      { href: "/trips", icon: <FaMountainSun />, text: "マイトリップ" },
+                      { href: "/gear", icon: <GrCatalog />, text: "ギア探索" },
+                      { href: "/my-gear", icon: <FaList />, text: "所有ギア" },
+                      { href: "/gear/register", icon: <FaPlusCircle />, text: "ギア登録" }
+                    ].map((item, index) => (
+                      <li key={item.href} className={`flex-shrink-0 ${index < 4 ? 'w-20 sm:w-24' : ''}`}>
+                        <NavItem href={item.href} icon={item.icon} text={item.text} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l from-gray-800 to-transparent pointer-events-none"></div>
+              </nav>
+            </div>
           </header>
-          <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <main className="flex-grow container mx-auto sm:px-6 lg:px-8">
             {children}
           </main>
           <footer className="bg-gray-800 text-gray-400 p-4 mt-8">
@@ -78,11 +88,9 @@ export default async function RootLayout({
 
 function NavItem({ href, icon, text }: { href: string; icon: React.ReactNode; text: string }) {
   return (
-    <li>
-      <Link href={href} className="flex flex-col items-center p-2 hover:bg-gray-700 rounded transition duration-300">
-        <span className="text-xl mb-1">{icon}</span>
-        <span className="text-xs">{text}</span>
-      </Link>
-    </li>
-  )
+    <Link href={href} className="flex flex-col items-center p-1 hover:bg-gray-700 rounded transition duration-300">
+      <span className="text-xl mb-1">{icon}</span>
+      <span className="text-center text-[10px] break-words">{text}</span>
+    </Link>
+  );
 }

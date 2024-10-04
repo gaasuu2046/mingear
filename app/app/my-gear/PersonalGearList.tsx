@@ -7,12 +7,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 
-import DeleteButton  from './DeleteButton'
+import DeleteButton from './DeleteButton'
 
-import AddToPackingListButton from '@/components/AddToPackingListButton'
 import { AutocompleteField } from '@/components/AutocompleteField'
-import { FormField } from '@/components/FormField'
-import { SearchSuggestionComponent } from '@/components/SearchSuggestionComponent'
+import AddToPackingListButton from '@/components/button/AddToPackingListButton'
+import { FormField } from '@/components/form/FormField'
+import { SearchSuggestionComponent } from '@/components/suggestion/SearchSuggestionComponent'
 
 interface PersonalGearWithRelations extends PersonalGear {
   category: Category;
@@ -47,7 +47,7 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
         const response = await fetch('/api/brand');
         if (response.ok) {
           const data = await response.json();
-          setBrands(data);     
+          setBrands(data);
         } else {
           console.error('ブランドの取得に失敗しました');
         }
@@ -75,7 +75,7 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
     fetchCategories()
   }, [])
 
-  
+
   // サジェスチョンから選択されたギアを所有ギアとして登録する処理
   const handleAddGear = async (gear: Gear) => {
     setIsSearchSuggestionUsed(true)
@@ -93,7 +93,7 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
         productUrl: gear.productUrl,
       }),
     })
-    
+
     if (response.ok) {
       const newPersonalGear = await response.json()
       setGearList([...gearList, newPersonalGear])
@@ -112,7 +112,7 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
       return;
     }
     e.preventDefault()
-    
+
     const response = await fetch('/api/my-gear', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -170,14 +170,14 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
         <div className="mx-auto mt-10 bg-white p-8 border border-gray-300 rounded-lg shadow-lg w-full max-w-2xl">
           <form onSubmit={handleAddCustomGear} className="space-y-6">
             <h2 className="text-2xl font-bold text-center text-black mb-6">新しいギアを登録</h2>
-            <SearchSuggestionComponent 
+            <SearchSuggestionComponent
               label="商品名"
               placeholder="商品名を入力"
               buttonTxt="追加"
-              onAddGear={handleAddGear} 
-              type="public" 
+              onAddGear={handleAddGear}
+              type="public"
               onNameChange={handleNameChange}
-              searchLimit={5} inputClassName='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black' 
+              searchLimit={5} inputClassName='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black'
             />
 
             <FormField
@@ -192,53 +192,53 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
               step="1"
             />
             {!isNewBrand ? (
-            <>
-              <AutocompleteField
-                label="ブランド"
-                id="brand"
-                value={brand}
-                onChange={(value) => {
-                  setBrand(value);
-                  const selectedBrand = brands.find(b => b.name === value);
-                  setBrandID(selectedBrand ? selectedBrand.id : '');
-                }}
-                options={brands.map(b => b.name)}
-                placeholder="THERM-A-REST"
-                onInvalid={(e: React.InvalidEvent<HTMLInputElement>) => 
-                  e.target.setCustomValidity('ブランドを選択するか、新しいブランドを入力してください。')}
-                onInput={(e: React.FormEvent<HTMLInputElement>) => 
-                  e.currentTarget.setCustomValidity('')}
-                        />
-              <button 
-                  type="button" 
+              <>
+                <AutocompleteField
+                  label="ブランド"
+                  id="brand"
+                  value={brand}
+                  onChange={(value) => {
+                    setBrand(value);
+                    const selectedBrand = brands.find(b => b.name === value);
+                    setBrandID(selectedBrand ? selectedBrand.id : '');
+                  }}
+                  options={brands.map(b => b.name)}
+                  placeholder="THERM-A-REST"
+                  onInvalid={(e: React.InvalidEvent<HTMLInputElement>) =>
+                    e.target.setCustomValidity('ブランドを選択するか、新しいブランドを入力してください。')}
+                  onInput={(e: React.FormEvent<HTMLInputElement>) =>
+                    e.currentTarget.setCustomValidity('')}
+                />
+                <button
+                  type="button"
                   onClick={() => setIsNewBrand(true)}
                   className="text-blue-500 hover:underline"
                 >
                   新しいブランドを追加
-              </button>
-            </>
+                </button>
+              </>
             ) : (
               <>
-              <FormField
-                label="新しいブランド名"
-                id="newBrand"
-                value={newBrand}
-                onChange={(e) => setNewBrand(e.target.value)}
-                placeholder="新しいブランド名を入力"
-                required={!isSearchSuggestionUsed}
-                onInvalid={(e: React.InvalidEvent<HTMLInputElement>) => 
-                  e.target.setCustomValidity('新しいブランドを入力してください。また、自作ギアの場合は`MYOG`を選択してください。')}
-                onInput={(e: React.FormEvent<HTMLInputElement>) => 
-                  e.currentTarget.setCustomValidity('')}
-              />
-              <button 
-                type="button" 
-                onClick={() => setIsNewBrand(false)}
-                className="text-blue-500 hover:underline"
-              >
-                既存のブランドを選択
-              </button>
-            </>
+                <FormField
+                  label="新しいブランド名"
+                  id="newBrand"
+                  value={newBrand}
+                  onChange={(e) => setNewBrand(e.target.value)}
+                  placeholder="新しいブランド名を入力"
+                  required={!isSearchSuggestionUsed}
+                  onInvalid={(e: React.InvalidEvent<HTMLInputElement>) =>
+                    e.target.setCustomValidity('新しいブランドを入力してください。また、自作ギアの場合は`MYOG`を選択してください。')}
+                  onInput={(e: React.FormEvent<HTMLInputElement>) =>
+                    e.currentTarget.setCustomValidity('')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsNewBrand(false)}
+                  className="text-blue-500 hover:underline"
+                >
+                  既存のブランドを選択
+                </button>
+              </>
             )}
             <FormField
               label="カテゴリー"
@@ -281,8 +281,8 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
               onChange={(e) => setProductUrl(e.target.value)}
               placeholder="https://sample.com"
             />
-            
-            <button 
+
+            <button
               type="submit"
               className="w-full bg-blue-500 text-black py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"
             >
@@ -310,15 +310,15 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
                 <p className="text-gray-600">重量: {item.weight}g</p>
                 <div className="p-1 flex flex-col">
                   <div className="flex-1 mb-2 sm:mb-0">
-                    <AddToPackingListButton 
-                      gearId={item.id} 
-                      type="personal" 
+                    <AddToPackingListButton
+                      gearId={item.id}
+                      type="personal"
                       className="w-full text-sm"
                     />
                   </div>
                   <div className="flex-1 mb-2 sm:mb-0">
-                    <DeleteButton 
-                      id={item.id} 
+                    <DeleteButton
+                      id={item.id}
                       className="w-full text-sm"
                     />
                   </div>

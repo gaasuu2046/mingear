@@ -31,10 +31,11 @@ export default async function PackingListPage({ params }: { params: { id: string
       },
       likes: true,
       trips: true,
+      _count: true,
     },
   })
 
-  
+
 
   if (!packingList) {
     return <div>パッキングリストが見つかりません</div>
@@ -42,7 +43,7 @@ export default async function PackingListPage({ params }: { params: { id: string
 
   const trips = await prisma.trip.findMany({
     where: { userId: session.user.id },
-    select: { id: true, name: true },
+    select: { id: true, name: true, packingListId: true, detail: true, ptid: true, elevation: true, area: true, startDate: true, endDate: true },
   })
 
   return (

@@ -3,8 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import AddToPackingListButton from '@/components/AddToPackingListButton'
-import ReviewForm from '@/components/ReviewForm'
+import AddToPackingListButton from '@/components/button/AddToPackingListButton'
+import ReviewForm from '@/components/form/ReviewForm'
 import prisma from '@/lib/prisma'
 
 async function getGear(id: string) {
@@ -29,11 +29,11 @@ export default async function GearDetail({ params }: { params: { id: string } })
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
           {/* 商品画像 */}
           <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg">
-            <Image 
-              src={gear.img} 
-              alt={gear.name} 
-              width={640} 
-              height={640} 
+            <Image
+              src={gear.img}
+              alt={gear.name}
+              width={640}
+              height={640}
               className="h-full w-full object-cover object-center"
             />
           </div>
@@ -54,9 +54,9 @@ export default async function GearDetail({ params }: { params: { id: string } })
               <AddToPackingListButton gearId={gear.id} type="public" />
             </div>
             <div className="mt-6">
-            <Link href={gear.productUrl || '#'} className="text-blue-500 hover:underline">
-              こちらで購入できます
-            </Link>
+              <Link href={gear.productUrl || '#'} className="text-blue-500 hover:underline">
+                こちらで購入できます
+              </Link>
             </div>
             <div className="mt-6 flex items-center">
               <StarIcon className="text-yellow-400 h-5 w-5 flex-shrink-0" aria-hidden="true" />

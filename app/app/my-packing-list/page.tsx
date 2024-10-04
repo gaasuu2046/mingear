@@ -27,7 +27,8 @@ async function getPackingList(userId: string): Promise<PackingList[]> {
             image: true
           }
         },
-        likes: true
+        likes: true,
+        trips: true,
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -45,9 +46,13 @@ async function getPackingList(userId: string): Promise<PackingList[]> {
         gear: item.gear ? { ...item.gear } : undefined,
         personalGear: item.personalGear ? { ...item.personalGear } : undefined,
         quantity: item.quantity,
-        type: item.gear ? 'public' : 'personal'
+        type: item.gear ? 'public' : 'personal',
+        altName: item.altName || undefined,
+        altWeight: item.altWeight || undefined,
+        altCategoryId: item.altCategoryId || undefined
       })),
       likes: list.likes.map(like => ({ id: like.id })),
+      tripId: list.trips[0]?.id ?? null, // trips は配列なので、最初の要素を取得
     }));
 
     return packingList;
@@ -71,7 +76,7 @@ async function getTrips(userId: string): Promise<Trip[]> {
     throw new Error('Failed to fetch trips');
   }
 }
-  
+
 export default async function MyPackingList() {
   const session = await getServerSession(authOptions) as Session | null
 
@@ -81,8 +86,8 @@ export default async function MyPackingList() {
         <div className="text-center p-8 bg-white shadow-md rounded-lg">
           <h1 className="text-2xl font-bold mb-4">ログインが必要です</h1>
           <p className="mb-6">パッキングリストを利用するにはログインしてください。</p>
-          <Link 
-            href="/auth/signin" 
+          <Link
+            href="/auth/signin"
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
           >
             ログインページへ
@@ -97,7 +102,7 @@ export default async function MyPackingList() {
     const initialPackingList = await getPackingList(session.user.id);
     // ユーザーの旅程を取得
     const trips = await getTrips(session.user.id);
-    
+
     return <PackingListClientWrapper initialPackingLists={initialPackingList} userId={session.user.id} trips={trips} />;
   } catch (error) {
     console.error('Error fetching packing lists:', error);

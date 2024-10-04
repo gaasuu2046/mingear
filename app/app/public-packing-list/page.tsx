@@ -3,13 +3,14 @@ import { getServerSession } from 'next-auth/next'
 
 import PublicPackingListsClient from './PublicPackingListsClient'
 
+import { PackingList } from '@/app/public-packing-list/types';
 import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 
-async function getPublicPackingLists() {
-  
+async function getPublicPackingLists(): Promise<Omit<PackingList, 'tripId' | 'isLikedByCurrentUser'>[]> {
+
   return await prisma.packingList.findMany({
-    include: { 
+    include: {
       user: {
         select: { name: true, image: true },
       },
@@ -18,7 +19,7 @@ async function getPublicPackingLists() {
         include: {
           gear: {
             include: {
-              brand: true 
+              brand: true
             }
           },
           personalGear: true,
@@ -43,12 +44,14 @@ export default async function PublicPackingLists() {
   const session = await getServerSession(authOptions)
   const currentUserId = session?.user?.id
   const packingLists = await getPublicPackingLists()
-  const packingListsWithLikeStatus = packingLists.map(list => ({
+  const packingListsWithLikeStatus: PackingList[] = packingLists.map(list => ({
     ...list,
     isLikedByCurrentUser: list.likes.some(like => like.userId === currentUserId),
-    createdAt: list.createdAt.toISOString(),
-    updatedAt: list.updatedAt.toISOString()
-  }))
-  
+    createdAt: list.createdAt,
+    updatedAt: list.updatedAt,
+    tripId: list.trips[0]?.id, // オプショナルチェーンを使用
+  }));
+
+
   return <PublicPackingListsClient packingLists={packingListsWithLikeStatus} currentUserId={currentUserId} />
 }

@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
-import { AutocompleteField } from './AutocompleteField';
-import { FormField } from './FormField';
+import { AutocompleteField } from '@/components/AutocompleteField';
+import { FormField } from '@/components/form/FormField';
+
 
 export default function GearForm() {
   const [name, setName] = useState('');
@@ -31,7 +32,7 @@ export default function GearForm() {
         const response = await fetch('/api/categories');
         if (response.ok) {
           const data = await response.json();
-          setCategories(data);     
+          setCategories(data);
         } else {
           console.error('カテゴリーの取得に失敗しました');
         }
@@ -48,7 +49,7 @@ export default function GearForm() {
         const response = await fetch('/api/brand');
         if (response.ok) {
           const data = await response.json();
-          setBrands(data);     
+          setBrands(data);
         } else {
           console.error('ブランドの取得に失敗しました');
         }
@@ -86,13 +87,13 @@ export default function GearForm() {
       const response = await fetch('/api/gear', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          name, 
-          description, 
-          categoryID, 
+        body: JSON.stringify({
+          name,
+          description,
+          categoryID,
           brandID: isNewBrand ? null : brandID,
           brandName: isNewBrand ? newBrand : null,
-          img, 
+          img,
           price: parseInt(price, 10),
           weight: parseInt(weight, 10),
           productUrl
@@ -139,7 +140,7 @@ export default function GearForm() {
     <div className="max-w-md mx-auto mt-10 bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
       <form onSubmit={handleSubmit} className="space-y-6">
         <h2 className="text-2xl font-bold text-center text-black mb-6">新しいギアを登録</h2>
-        
+
         <FormField
           label="商品名"
           id="name"
@@ -173,47 +174,47 @@ export default function GearForm() {
           options={categories.map(c => c.name)}
         />
         {!isNewBrand ? (
-        <>
-          <AutocompleteField
-            label="ブランド"
-            id="brand"
-            value={brand}
-            onChange={(value) => {
-              setBrand(value);
-              const selectedBrand = brands.find(b => b.name === value);
-              setBrandID(selectedBrand ? selectedBrand.id : '');
-            }}
-            options={brands.map(b => b.name)}
-            placeholder="THERM-A-REST"
-            required
-          />
-          <button 
-              type="button" 
+          <>
+            <AutocompleteField
+              label="ブランド"
+              id="brand"
+              value={brand}
+              onChange={(value) => {
+                setBrand(value);
+                const selectedBrand = brands.find(b => b.name === value);
+                setBrandID(selectedBrand ? selectedBrand.id : '');
+              }}
+              options={brands.map(b => b.name)}
+              placeholder="THERM-A-REST"
+              required
+            />
+            <button
+              type="button"
               onClick={() => setIsNewBrand(true)}
               className="text-blue-500 hover:underline"
             >
               新しいブランドを追加
-          </button>
-        </>
+            </button>
+          </>
         ) : (
           <>
-          <FormField
-            label="新しいブランド名"
-            id="newBrand"
-            value={newBrand}
-            onChange={(e) => setNewBrand(e.target.value)}
-            placeholder="新しいブランド名を入力"
-            required
-          />
-          <button 
-            type="button" 
-            onClick={() => setIsNewBrand(false)}
-            className="text-blue-500 hover:underline"
-          >
-            既存のブランドを選択
-          </button>
-        </>
-        )} 
+            <FormField
+              label="新しいブランド名"
+              id="newBrand"
+              value={newBrand}
+              onChange={(e) => setNewBrand(e.target.value)}
+              placeholder="新しいブランド名を入力"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setIsNewBrand(false)}
+              className="text-blue-500 hover:underline"
+            >
+              既存のブランドを選択
+            </button>
+          </>
+        )}
         <FormField
           label="画像URL"
           id="img"
@@ -256,8 +257,8 @@ export default function GearForm() {
           onChange={(e) => setProductUrl(e.target.value)}
           placeholder="https://sample.com"
         />
-        
-        <button 
+
+        <button
           type="submit"
           className="w-full bg-blue-500 text-black py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"
         >
