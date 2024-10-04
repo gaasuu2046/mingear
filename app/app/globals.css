@@ -8,14 +8,6 @@
   --background-end-rgb: 245, 250, 255;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 230, 230, 230;
-    --background-start-rgb: 20, 20, 20;
-    --background-end-rgb: 35, 35, 35;
-  }
-}
-
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
@@ -49,22 +41,9 @@ button {
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  form,
-  form input,
-  form textarea,
-  form select,
-  form option,
-  form label,
-  .form-text-black {
-    color: #e0e0e0;
-    background-color: #2a2a2a;
-  }
-}
-
 @layer components {
   .card {
-    @apply bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg;
+    @apply bg-white shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg;
   }
 
   .card-body {
@@ -72,11 +51,11 @@ button {
   }
 
   .card-title {
-    @apply text-xl font-bold mb-2 text-gray-800 dark:text-gray-200;
+    @apply text-xl font-bold mb-2 text-gray-800;
   }
 
   .card-text {
-    @apply text-sm text-gray-600 dark:text-gray-400 mb-1;
+    @apply text-sm text-gray-600 mb-1;
   }
 
   .btn {
@@ -88,9 +67,12 @@ button {
   }
 
   .btn-secondary {
-    @apply bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600;
+    @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
   }
 }
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-800 hover:bg-gray-300
+  }
 
 .popup-message {
   position: fixed;

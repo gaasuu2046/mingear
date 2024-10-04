@@ -38,7 +38,7 @@ export default async function RootLayout({
             <div className="container mx-auto sm:px-6 lg:px-8">
               <nav className="flex justify-between items-center py-2">
                 <h1 className="text-xl sm:text-2xl ml-2 text-green-400">Rate Your Own Gear!</h1>
-                <div className="flex flex-wrap text-[8px] sm:text-xs gap-2 sm:gap-4">
+                <div className="flex flex-wrap text-[10px] sm:text-xs gap-2 sm:gap-4">
                   <UserInfo session={session} />
                   {session ? (
                     <Link href="/auth/profile" className="text-gray-300 hover:text-white mr-2">

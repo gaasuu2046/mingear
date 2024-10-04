@@ -1,7 +1,7 @@
 // app/my-packing-list/PackingListClientWrapper.tsx
 "use client";
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { FaChevronDown, FaChevronUp, FaCopy, FaEdit, FaLine, FaPlusCircle } from 'react-icons/fa';
 
 import GearAddModal from './GearAddModal'
@@ -209,7 +209,8 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
           </thead>
           <tbody>
             {packingLists.map((list) => (
-              <>
+              <React.Fragment key={list.id}>
+
                 <tr key={list.id} className="border-b hover:bg-gray-50">
                   <td className="px-1 py-2">
                     <div className="flex items-center">
@@ -292,7 +293,7 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
                     </td>
                   </tr>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </tbody>
         </table>
