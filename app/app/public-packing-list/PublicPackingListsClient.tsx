@@ -160,7 +160,7 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
                 )}
               </div>
               <div className="overflow-x-auto responsive-table">
-                <table className="min-w-full text-left bg-white dark:bg-gray-800">
+                <table className="min-w-full text-left bg-white">
                   <tbody>
                     <tr>
                       <th className="w-24 sm:w-32 border bg-gray-100 text-left px-2 py-1">詳細</th>
@@ -196,7 +196,7 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
 
               <div className="overflow-x-auto responsive-table text-xs">
                 <p className="font-semibold mb-2">ギア一覧:</p>
-                <table className="min-w-full bg-white dark:bg-gray-800">
+                <table className="min-w-full bg-white">
                   <thead>
                     <tr>
                       <th className="border p-2 bg-gray-100 text-left">ギア名</th>

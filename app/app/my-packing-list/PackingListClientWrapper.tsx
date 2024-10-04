@@ -195,7 +195,7 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
       </div>
 
       <div className="overflow-x-auto responsive-table">
-        <table className="min-w-full bg-white dark:bg-gray-800 text-xs table-fixed">
+        <table className="min-w-full bg-white text-xs table-fixed">
           <thead className="bg-gray-100">
             <tr>
               <th className="w-1/2 px-1 py-2 text-left">リスト名</th>
