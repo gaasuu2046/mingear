@@ -21,6 +21,7 @@ interface ItemData {
 
 interface RequestBody {
   name: string;
+  detail: string;
   tripInfo: TripInfo;
   items: ItemData[];
 }
@@ -31,7 +32,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
   }
 
-  const { name, tripInfo, items }: RequestBody = await request.json()
+  const { name, detail, season,tripInfo }: RequestBody = await request.json()
   console.log("tripInfo", tripInfo)
 
   try {
@@ -39,16 +40,8 @@ export async function POST(request: Request) {
       data: {
         name,
         userId: session.user.id,
-        detail: tripInfo.detail,
-        season: tripInfo.season,
-        items: {
-          create: items.map((item: ItemData) => {
-            const itemData: ItemData = { quantity: item.quantity || 1 };
-            if (item.gearId) itemData.gearId = item.gearId;
-            if (item.personalGearId) itemData.personalGearId = item.personalGearId;
-            return itemData;
-          }),
-        },
+        detail: detail || '',
+        season: season,
       },
       include: {
         items: {
