@@ -3,12 +3,14 @@ import { Noto_Sans_JP } from 'next/font/google'
 import Link from 'next/link'
 import { Session } from "next-auth"
 import { getServerSession } from "next-auth/next"
+import { Suspense } from 'react';
 import { FaList, FaListAlt, FaUser, FaPlusCircle } from 'react-icons/fa'
 import { FaMountainSun } from "react-icons/fa6";
 import { GrCatalog } from 'react-icons/gr'
 
 import type { Metadata } from 'next'
 
+import LoadingSpinner from '@/components/LoadingSpinner'
 import { Providers } from '@/components/Providers'
 import UserInfo from '@/components/UserInfo'
 import { authOptions } from "@/lib/auth"
@@ -73,7 +75,9 @@ export default async function RootLayout({
             </div>
           </header>
           <main className="flex-grow container mx-auto sm:px-6 lg:px-8">
-            {children}
+            <Suspense fallback={<LoadingSpinner />}>
+              {children}
+            </Suspense>
           </main>
           <footer className="bg-gray-800 text-gray-400 p-4 mt-8">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">

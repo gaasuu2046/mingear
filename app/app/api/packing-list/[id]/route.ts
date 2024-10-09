@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 
-import { PackingListItem } from '@/app/my-packing-list/types'  // 型定義をインポート
+import { PackingListItem } from '@/app/my-packing-list/types'
 import { SEASONS, Season } from '@/app/types/season'
 import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
@@ -12,7 +12,7 @@ interface UpdatePackingListRequest {
   detail?: string;
   season: Season;
   items?: Omit<PackingListItem, 'id'>[];
-  tripId?: string;
+  trips: { id: number; name: string }[];  // tripsをオブジェクトの配列として受け取る
 }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
@@ -21,20 +21,40 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
   }
 
-  const { name, detail, season, items, tripId }: UpdatePackingListRequest = await request.json()
+  const { name, detail, season, items, trips }: UpdatePackingListRequest = await request.json()
   const id = parseInt(params.id, 10)
 
   if (isNaN(id)) {
+    console.log('id:', id)
     return NextResponse.json({ error: '無効なIDです' }, { status: 400 })
   }
 
   if (season && !SEASONS.some(s => s.en === season)) {
+    console.log('season:', season)
     return NextResponse.json({ error: '無効なシーズンです' }, { status: 400 })
   }
+
+  // tripsのチェックを追加
+  if (!trips || !Array.isArray(trips)) {
+    console.log('trips:', trips)
+    return NextResponse.json({ error: '無効な旅程データです' }, { status: 400 })
+  }
+
+  const tripIds = trips.map(trip => trip.id)
 
   try {
     const packingList = await prisma.$transaction(async (prisma) => {
       let updatedList;
+
+      // 既存の旅程との関連をすべて削除
+      await prisma.packingList.update({
+        where: { id },
+        data: {
+          trips: {
+            set: [],
+          },
+        },
+      });
 
       if (items) {
         // ギアの更新がある場合
@@ -48,7 +68,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
             name,
             detail,
             season,
-            trips: tripId ? { connect: { id: parseInt(tripId, 10) } } : undefined,
+            trips: {
+              connect: tripIds.map(tripId => ({ id: tripId })),
+            },
             items: {
               create: items.map((item) => ({
                 quantity: item.quantity || 1,
@@ -79,7 +101,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
             name,
             detail,
             season,
-            trips: tripId ? { connect: { id: parseInt(tripId, 10) } } : undefined,
+            trips: {
+              connect: tripIds.map(tripId => ({ id: tripId })),
+            },
           },
           include: {
             items: {

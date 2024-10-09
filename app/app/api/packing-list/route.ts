@@ -7,23 +7,15 @@ import { Season } from '@/app/types/season'
 import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 
-// 新しい型定義
 interface TripInfo {
-  detail: string;
-  season: Season;
-}
-
-interface ItemData {
-  quantity: number;
-  gearId?: string;
-  personalGearId?: string;
+  id: number;
 }
 
 interface RequestBody {
   name: string;
   detail: string;
-  tripInfo: TripInfo;
-  items: ItemData[];
+  season: Season;
+  trips: TripInfo[];
 }
 
 export async function POST(request: Request) {
@@ -32,8 +24,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
   }
 
-  const { name, detail, season,tripInfo }: RequestBody = await request.json()
-  console.log("tripInfo", tripInfo)
+  const { name, detail, season, trips }: RequestBody = await request.json()
+  console.log("Received trips:", trips)
 
   try {
     const packingList = await prisma.packingList.create({
@@ -41,7 +33,10 @@ export async function POST(request: Request) {
         name,
         userId: session.user.id,
         detail: detail || '',
-        season: season,
+        season,
+        trips: {
+          connect: trips.map(trip => ({ id: trip.id }))
+        },
       },
       include: {
         items: {
@@ -50,6 +45,7 @@ export async function POST(request: Request) {
             personalGear: true,
           },
         },
+        trips: true,
       },
     })
 
@@ -60,7 +56,31 @@ export async function POST(request: Request) {
   }
 }
 
-// GET関数は変更なし
+export async function GET() {
+  const session = await getServerSession(authOptions)
+  if (!session || !session.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  const userId = session.user.id
+  try {
+    const packingList = await prisma.packingList.findMany({
+      where: { userId },
+      include: {
+        items: {
+          include: {
+            gear: true,
+            personalGear: true,
+          },
+        },
+        trips: true,
+      },
+    })
+    return NextResponse.json(packingList)
+  } catch (error) {
+    console.error(error)
+    return NextResponse.json({ error: 'Failed to fetch packing list' }, { status: 500 })
+  }
+}
 
 export async function DELETE(request: Request) {
   const session = await getServerSession(authOptions) as Session | null

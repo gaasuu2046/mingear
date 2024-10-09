@@ -16,9 +16,10 @@ export interface Trip {
   lon?: number | null;
   userId: string;
   area?: string | null;
-  startDate?: Date | null;  // 追加
-  endDate?: Date | null;    // 追加
+  startDate?: Date | null;
+  endDate?: Date | null;
   user: User;
+  packingLists?: PackingList[];  // 追加
 }
 
 export interface Gear {
@@ -74,7 +75,8 @@ export interface PackingList {
   updatedAt: string;
   items: PackingListItem[];
   likes: { id: number }[];
-  tripId?: number | null;
+  trips: Trip[];  // Trip[]型に変更
+  tripIds?: number[];  // 追加
 }
 
 export type Season = 'SPRING' | 'SUMMER' | 'AUTUMN' | 'WINTER' | 'UNSPECIFIED';

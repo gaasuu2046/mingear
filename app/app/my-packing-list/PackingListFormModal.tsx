@@ -1,7 +1,8 @@
-// app/my-packing-list/PackingListFormModal.tsx
+import { Chip } from '@nextui-org/react'
 import Link from 'next/dist/client/link';
 import React, { useState, useEffect } from 'react'
 import Modal from 'react-modal'
+
 
 import { PackingList, Trip } from './types'
 
@@ -31,7 +32,7 @@ export default function PackingListFormModal({ isOpen, onClose, onSubmit, packin
     name: '',
     detail: '',
     season: 'UNSPECIFIED',
-    tripId: undefined,
+    trips: [],
   })
 
   useEffect(() => {
@@ -40,14 +41,14 @@ export default function PackingListFormModal({ isOpen, onClose, onSubmit, packin
         name: packingList.name,
         detail: packingList.detail || '',
         season: packingList.season,
-        tripId: packingList.tripId,
+        trips: packingList.trips || [],
       })
     } else {
       setFormData({
         name: '',
         detail: '',
         season: 'UNSPECIFIED',
-        tripId: undefined,
+        trips: [],
       })
     }
   }, [packingList])
@@ -55,6 +56,20 @@ export default function PackingListFormModal({ isOpen, onClose, onSubmit, packin
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleTripChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const tripId = parseInt(e.target.value);
+    const isChecked = e.target.checked;
+
+    setFormData(prev => {
+      if (isChecked) {
+        const tripToAdd = trips.find(trip => trip.id === tripId);
+        return { ...prev, trips: [...(prev.trips || []), tripToAdd].filter((t): t is Trip => t !== undefined) };
+      } else {
+        return { ...prev, trips: (prev.trips || []).filter(trip => trip.id !== tripId) };
+      }
+    });
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -110,20 +125,23 @@ export default function PackingListFormModal({ isOpen, onClose, onSubmit, packin
           </select>
         </div>
         <div className="mb-4">
-          <label htmlFor="tripId" className="block mb-2">旅程</label>
+          <label htmlFor="trips" className="block mb-2">旅程 (複数選択可能)</label>
           {trips.length > 0 ? (
-            <select
-              id="tripId"
-              name="tripId"
-              value={formData.tripId || ''}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            >
-              <option value="">選択してください</option>
-              {trips.map(trip => (
-                <option key={trip.id} value={trip.id}>{trip.name}</option>
+            <div className="max-h-40 overflow-y-auto">
+              {trips.map((trip) => (
+                <div key={trip.id} className="flex items-center mb-2">
+                  <input
+                    type="checkbox"
+                    id={`trip-${trip.id}`}
+                    value={trip.id}
+                    checked={formData.trips?.some(t => t.id === trip.id) || false}
+                    onChange={handleTripChange}
+                    className="mr-2"
+                  />
+                  <label htmlFor={`trip-${trip.id}`}>{trip.name}</label>
+                </div>
               ))}
-            </select>
+            </div>
           ) : (
             <div className="text-red-500 mt-2">
               <p>旅程が登録されていません。</p>
@@ -132,6 +150,20 @@ export default function PackingListFormModal({ isOpen, onClose, onSubmit, packin
               </Link>
             </div>
           )}
+        </div>
+        <div className="mt-2">
+          {formData.trips?.map((trip) => (
+            <Chip
+              key={trip.id}
+              onClose={() => {
+                const newTrips = formData.trips?.filter(t => t.id !== trip.id) || [];
+                setFormData(prev => ({ ...prev, trips: newTrips }));
+              }}
+              className="mr-2 mb-2"
+            >
+              {trip.name}
+            </Chip>
+          ))}
         </div>
         <div className="flex justify-between">
           <button

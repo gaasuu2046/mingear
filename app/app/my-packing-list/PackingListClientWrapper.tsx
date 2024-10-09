@@ -24,7 +24,7 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
   const [isFormModalOpen, setIsFormModalOpen] = useState(false)
   // const [gearsToReview, setGearsToReview] = useState<Gear[]>([])
   const [expandedLists, setExpandedLists] = useState<number[]>([])
-  const [showPopup, setShowPopup] = useState(false);
+  const [, setShowPopup] = useState(false);
 
 
   const handleNewList = () => {
@@ -154,7 +154,7 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
     let text = `パッキングリスト: ${list.name}\n`;
     text += `シーズン: ${SEASONS.find(season => season.en === list.season)?.ja || '未設定'}\n`;
     text += `総重量: ${calculateTotalWeight(list)}g\n`;
-    text += `旅程: ${trips.find(trip => trip.id === list.tripId)?.name || '未設定'}\n\n`;
+    text += `旅程: ${renderRelatedTrips(list)}\n\n`;
     text += "ギア一覧:\n";
     list.items.forEach(item => {
       text += `- ${renderGearName(item)}: ${renderGearWeight(item)}g (${item.quantity}個)\n`;
@@ -179,6 +179,13 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
     const text = encodeURIComponent(generatePackingListText(list));
     const lineUrl = `https://line.me/R/msg/text/?${text}`;
     window.open(lineUrl, '_blank');
+  };
+
+  // 関連する旅程を表示する関数
+  const renderRelatedTrips = (list: PackingList) => {
+    if (!list.trips || list.trips.length === 0) return '未設定';
+
+    return list.trips.map(trip => trip.name).join(', ');
   };
 
   return (
@@ -227,7 +234,9 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
                     </div>
                   </td>
                   <td className="px-1 py-2 truncate">{SEASONS.find(season => season.en === list.season)?.ja || '未設定'}</td>
-                  <td className="px-1 py-2 truncate">{trips.find(trip => trip.id === list.tripId)?.name || '未設定'}</td>
+                  <td className="px-1 py-2 truncate">
+                    {renderRelatedTrips(list)}
+                  </td>
                   <td className="px-1 py-2 text-right">{list.items.length}</td>
                   <td className="px-1 py-2 text-right">{calculateTotalWeight(list)}g</td>
                   <td className="px-1 py-2 text-center">{list.likes?.length || 0}</td>

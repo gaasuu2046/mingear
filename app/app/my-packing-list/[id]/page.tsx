@@ -4,7 +4,7 @@ import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { PackingList, Trip, PackingListItem } from '@/app/my-packing-list/types';
+import { PackingList, PackingListItem, Trip } from '@/app/my-packing-list/types';
 import { SEASONS } from '@/app/types/season';
 
 interface PageProps {
@@ -15,7 +15,6 @@ interface PageProps {
 
 export default function MyPackingListDetail({ params }: PageProps) {
   const [packingList, setPackingList] = useState<PackingList | null>(null);
-  const [trip, setTrip] = useState<Trip | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -29,7 +28,6 @@ export default function MyPackingListDetail({ params }: PageProps) {
         }
         const data = await response.json();
         setPackingList(data);
-        setTrip(data.trip || null);
       } catch (err) {
         setError('パッキングリストの取得に失敗しました');
         console.error('Error fetching packing list:', err);
@@ -40,6 +38,7 @@ export default function MyPackingListDetail({ params }: PageProps) {
 
     fetchPackingList();
   }, [params.id]);
+
 
   const calculateTotalWeight = (list: PackingList): number => {
     return list.items.reduce((total, item) => {
@@ -59,6 +58,7 @@ export default function MyPackingListDetail({ params }: PageProps) {
   if (isLoading) return <div>読み込み中...</div>;
   if (error) return <div>{error}</div>;
   if (!packingList) return <div>パッキングリストが見つかりません</div>;
+
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -100,20 +100,22 @@ export default function MyPackingListDetail({ params }: PageProps) {
               <p>{calculateTotalWeight(packingList)}g</p>
             </div>
           </div>
-
-          {trip && (
+          {packingList.trips && packingList.trips.length > 0 && (
             <div className="mb-6 bg-gray-100 p-4 rounded-lg">
               <h3 className="text-xl font-bold mb-2 text-gray-800">関連する旅程</h3>
-              <p className="font-semibold">{trip.name}</p>
-              {trip.area && <p>エリア: {trip.area}</p>}
-              {trip.elevation && <p>標高: {trip.elevation}m</p>}
-              {trip.startDate && trip.endDate && (
-                <p>期間: {new Date(trip.startDate).toLocaleDateString('ja-JP')} - {new Date(trip.endDate).toLocaleDateString('ja-JP')}</p>
-              )}
-              {trip.detail && <p className="mt-2">{trip.detail}</p>}
+              {packingList.trips.map((trip: Trip) => (
+                <div key={trip.id} className="mb-4 last:mb-0">
+                  <p className="font-semibold">{trip.name}</p>
+                  {trip.area && <p>エリア: {trip.area}</p>}
+                  {trip.elevation && <p>標高: {trip.elevation}m</p>}
+                  {trip.startDate && trip.endDate && (
+                    <p>期間: {new Date(trip.startDate).toLocaleDateString('ja-JP')} - {new Date(trip.endDate).toLocaleDateString('ja-JP')}</p>
+                  )}
+                  {trip.detail && <p className="mt-2">{trip.detail}</p>}
+                </div>
+              ))}
             </div>
           )}
-
           <h2 className="text-2xl font-bold mb-4 text-gray-800">アイテム一覧</h2>
           {packingList.items.length > 0 ? (
             <ul className="space-y-2">

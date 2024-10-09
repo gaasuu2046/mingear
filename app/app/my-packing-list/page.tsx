@@ -1,11 +1,13 @@
 import Link from 'next/link'
 import { Session } from "next-auth"
 import { getServerSession } from 'next-auth/next'
+import { Suspense } from 'react'
 
 import { PackingList, Trip } from './types' // PackingListの型をインポート
 
 import PackingListClientWrapper from '@/app/my-packing-list/PackingListClientWrapper'
 import { Season } from '@/app/types/season'
+import LoadingSpinner from '@/components/LoadingSpinner'
 import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 
@@ -35,6 +37,7 @@ async function getPackingList(userId: string): Promise<PackingList[]> {
 
     // prismaの返り値をPackingList型に変換
     const packingList: PackingList[] = packingListRaw.map(list => ({
+      user: { id: list.user.id, name: list.user.name, image: list.user.image },
       id: list.id,
       name: list.name,
       detail: list.detail || undefined,
@@ -52,6 +55,10 @@ async function getPackingList(userId: string): Promise<PackingList[]> {
         altCategoryId: item.altCategoryId || undefined
       })),
       likes: list.likes.map(like => ({ id: like.id })),
+      trips: list.trips.map(trip => ({
+        ...trip,
+        user: list.user // Add user property to match the Trip type
+      })),
       tripId: list.trips[0]?.id ?? null, // trips は配列なので、最初の要素を取得
     }));
 
@@ -103,7 +110,11 @@ export default async function MyPackingList() {
     // ユーザーの旅程を取得
     const trips = await getTrips(session.user.id);
 
-    return <PackingListClientWrapper initialPackingLists={initialPackingList} userId={session.user.id} trips={trips} />;
+    return (
+      <Suspense fallback={<LoadingSpinner />}>
+        <PackingListClientWrapper initialPackingLists={initialPackingList} userId={session.user.id} trips={trips} />;
+      </Suspense>
+    )
   } catch (error) {
     console.error('Error fetching packing lists:', error);
     return (

@@ -6,7 +6,8 @@ export interface User {
 
 export interface Trip {
   id: number;
-  packingListId: number;
+  // packingListId: number;
+  packingListId: number | null;
   name: string;
   detail: string | null;
   ptid: string | null;
