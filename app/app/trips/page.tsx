@@ -23,7 +23,24 @@ export default function Trips() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // const router = useRouter();
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm('この旅程を削除してもよろしいですか？')) {
+      try {
+        const response = await fetch(`/api/trips/${id}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          setTrips(trips.filter(trip => trip.id !== id));
+        } else {
+          throw new Error('Failed to delete trip');
+        }
+      } catch (err) {
+        setError('旅程の削除に失敗しました');
+        console.error('Error deleting trip:', err);
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchTrips = async () => {
@@ -72,14 +89,12 @@ export default function Trips() {
                   </Link>
                 </p>
               )}
-              {/* <div className="mt-2 space-x-2">
-                <button
-                  onClick={() => router.push(`/trips/${trip.id}`)}
-                  className="bg-gray-200 text-gray-800 px-3 py-1 rounded hover:bg-gray-300"
-                >
-                  詳細を見る
-                </button>
-              </div> */}
+              <button
+                onClick={() => handleDelete(trip.id)}
+                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+              >
+                削除
+              </button>
             </li>
           ))}
         </ul>

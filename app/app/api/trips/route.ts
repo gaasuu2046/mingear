@@ -53,14 +53,6 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, detail, ptid, elevation, area, startDate, endDate } = body;
 
-    // パッキングリストの作成（仮の実装）
-    const packingList = await prisma.packingList.create({
-      data: {
-        name: `${name}のパッキングリスト`,
-        userId: session.user.id,
-      },
-    });
-
     const trip = await prisma.trip.create({
       data: {
         name,
@@ -71,7 +63,6 @@ export async function POST(request: Request) {
         startDate: new Date(startDate),
         endDate: new Date(endDate),
         userId: session.user.id,
-        packingListId: packingList.id,
       },
     });
 
