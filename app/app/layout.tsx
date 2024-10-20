@@ -94,7 +94,7 @@ function NavItem({ href, icon, text }: { href: string; icon: React.ReactNode; te
   return (
     <Link href={href} className="flex flex-col items-center p-1 hover:bg-gray-700 rounded transition duration-300">
       <span className="text-xl mb-1">{icon}</span>
-      <span className="text-center text-[10px] break-words">{text}</span>
+      <span className="text-center text-[9px] break-words">{text}</span>
     </Link>
   );
 }

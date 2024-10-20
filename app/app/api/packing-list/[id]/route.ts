@@ -169,3 +169,49 @@ export async function GET(request: Request, { params }: { params: { id: string }
     return NextResponse.json({ error: 'パッキングリストの取得に失敗しました' }, { status: 500 })
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const id = parseInt(params.id, 10);
+
+  try {
+    const packingList = await prisma.packingList.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+
+    if (!packingList) {
+      return NextResponse.json({ error: 'Packing list not found' }, { status: 404 });
+    }
+
+    if (packingList.userId !== session.user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // トランザクションを使用して、関連するアイテムとパッキングリストを削除
+    await prisma.$transaction(async (prisma) => {
+      // まず、関連する PackingListItem を削除
+      await prisma.packingListItem.deleteMany({
+        where: { packingListId: id },
+      });
+
+      // 次に、パッキングリストを削除
+      await prisma.packingList.delete({
+        where: { id },
+      });
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting packing list:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

@@ -48,6 +48,25 @@ export default function PersonalGearList({ initialGearList, initialCategories, i
   const [isSearchSuggestionUsed, setIsSearchSuggestionUsed] = useState(false)
   const [isGearAdded, setIsGearAdded] = useState(false)
 
+  const resetForm = useCallback(() => {
+    setFormData({
+      name: '',
+      weight: '',
+      brand: '',
+      category: '',
+      categoryID: '',
+      img: '',
+      price: '',
+      productUrl: '',
+    })
+    setShowAddForm(false)
+    setIsNewBrand(false)
+    setBrandID('')
+    setNewBrand('')
+    setIsGearAdded(false)
+    setIsSearchSuggestionUsed(false)
+  }, [])
+
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -76,7 +95,7 @@ export default function PersonalGearList({ initialGearList, initialCategories, i
       setIsGearAdded(true)
       resetForm()
     }
-  }, [])
+  }, [resetForm])
 
   const handleNameChange = useCallback((newName: string) => {
     setFormData(prev => ({ ...prev, name: newName }))
@@ -107,26 +126,8 @@ export default function PersonalGearList({ initialGearList, initialCategories, i
       setGearList(prev => [...prev, newPersonalGear])
       resetForm()
     }
-  }, [formData, isGearAdded, isNewBrand, brandID, newBrand])
+  }, [formData, isGearAdded, isNewBrand, brandID, newBrand, resetForm])
 
-  const resetForm = useCallback(() => {
-    setFormData({
-      name: '',
-      weight: '',
-      brand: '',
-      category: '',
-      categoryID: '',
-      img: '',
-      price: '',
-      productUrl: '',
-    })
-    setShowAddForm(false)
-    setIsNewBrand(false)
-    setBrandID('')
-    setNewBrand('')
-    setIsGearAdded(false)
-    setIsSearchSuggestionUsed(false)
-  }, [])
 
   const gearByCategory = useMemo(() => {
     return gearList.reduce((acc, item) => {

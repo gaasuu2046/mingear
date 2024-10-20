@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useCallback, useMemo } from 'react'
-import { FaChevronDown, FaChevronUp, FaCopy, FaEdit, FaLine, FaPlusCircle } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaCopy, FaEdit, FaLine, FaPlusCircle, FaTrash } from 'react-icons/fa';
 
 import GearAddModal from './GearAddModal'
 import PackingListFormModal from './PackingListFormModal'
@@ -23,6 +23,22 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
   const [isFormModalOpen, setIsFormModalOpen] = useState(false)
   const [expandedLists, setExpandedLists] = useState<number[]>([])
   const [showPopup, setShowPopup] = useState(false);
+
+  const handleDeleteList = useCallback(async (listId: number) => {
+    if (!confirm('このパッキングリストを削除してもよろしいですか？')) return;
+
+    try {
+      const response = await fetch(`/api/packing-list/${listId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) throw new Error('Failed to delete packing list');
+
+      setPackingLists(prev => prev.filter(list => list.id !== listId));
+    } catch (error) {
+      console.error('Error deleting packing list:', error);
+    }
+  }, []);
 
   const handleNewList = useCallback(() => {
     setSelectedList(null)
@@ -260,6 +276,13 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
                         title="LINEで共有"
                       >
                         <FaLine />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteList(list.id)}
+                        className="bg-red-500 text-white px-2 py-1.5 rounded hover:bg-red-600 mr-1 text-sm"
+                        title="パッキングリストを削除"
+                      >
+                        <FaTrash />
                       </button>
                     </div>
                   </td>

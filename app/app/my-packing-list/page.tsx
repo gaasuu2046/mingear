@@ -112,7 +112,7 @@ export default async function MyPackingList() {
 
     return (
       <Suspense fallback={<LoadingSpinner />}>
-        <PackingListClientWrapper initialPackingLists={initialPackingList} userId={session.user.id} trips={trips} />;
+        <PackingListClientWrapper initialPackingLists={initialPackingList} userId={session.user.id} trips={trips} />
       </Suspense>
     )
   } catch (error) {
