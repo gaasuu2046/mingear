@@ -1,7 +1,8 @@
 // /app/my-packing-list/GearAddModal.tsx
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react'
+import { debounce } from 'lodash';
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import Modal from 'react-modal'
 
 import { Gear, Category } from './types'
@@ -30,12 +31,51 @@ const customStyles = {
   },
 };
 
+const GearRow = React.memo(function GearRow({ categoryId, index, gear, onInput, onRemove }: { categoryId: number, index: number, gear: Gear, onInput: (categoryId: number, index: number, field: keyof Gear, value: string | number) => void, onRemove: (categoryId: number, index: number) => void }) {
+  return (
+    <div className="mb-2 grid grid-cols-5 gap-2">
+      <input
+        type="text"
+        value={gear.name}
+        onChange={(e) => onInput(categoryId, index, 'name', e.target.value)}
+        placeholder="ギア名"
+        className="p-2 border rounded"
+      />
+      <input
+        type="number"
+        value={gear.weight === 0 ? '' : gear.weight}
+        onChange={(e) => onInput(categoryId, index, 'weight', Number(e.target.value))}
+        placeholder="単品重量"
+        className="p-2 border rounded"
+      />
+      <input
+        type="number"
+        value={gear.quantity}
+        onChange={(e) => onInput(categoryId, index, 'quantity', Number(e.target.value))}
+        min="1"
+        placeholder="数量"
+        className="p-2 border rounded"
+      />
+      <div className="p-2 border rounded bg-gray-100">
+        {gear.weight * (gear.quantity ?? 1)}
+      </div>
+      <button
+        onClick={() => onRemove(categoryId, index)}
+        className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+      >
+        削除
+      </button>
+    </div>
+  );
+});
+
 export default function GearAddModal({ isOpen, onClose, onAddGears, userId, existingGears }: GearAddModalProps) {
   const [categories, setCategories] = useState<Category[]>([])
   const [gearInputs, setGearInputs] = useState<{ [key: number]: Gear[] }>({})
   const [suggestions, setSuggestions] = useState<{ [key: number]: Gear[] }>({})
   const [appElement, setAppElement] = useState<HTMLElement | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetchingSuggestions, setIsFetchingSuggestions] = useState<{ [key: number]: boolean }>({});
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -49,7 +89,7 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
     } catch (error) {
       console.error('Error fetching categories:', error)
     } finally {
-      setIsLoading(false); // フェッチ完了時にローディングを false に
+      setIsLoading(false);
     }
   }, [])
 
@@ -61,8 +101,6 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
   }, [fetchCategories])
 
   useEffect(() => {
-    console.log('Existing gears:', existingGears);
-
     if (categories.length > 0) {
       const initialGearInputs = categories.reduce((acc, category) => {
         const categoryGears = existingGears.filter(gear =>
@@ -79,6 +117,11 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
   }, [categories, existingGears]);
 
   const fetchSuggestions = useCallback(async (query: string, categoryId: number) => {
+    if (query.length <= 1) {
+      setSuggestions(prev => ({ ...prev, [categoryId]: [] }));
+      return;
+    }
+    setIsFetchingSuggestions(prev => ({ ...prev, [categoryId]: true }));
     try {
       const response = await fetch(`/api/gear/search?q=${query}&userId=${userId}&categoryId=${categoryId}`)
       if (!response.ok) {
@@ -88,36 +131,31 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
       setSuggestions(prev => ({ ...prev, [categoryId]: data }))
     } catch (error) {
       console.error('Error fetching suggestions:', error)
+    } finally {
+      setIsFetchingSuggestions(prev => ({ ...prev, [categoryId]: false }));
     }
   }, [userId])
 
+  const debouncedFetchSuggestions = useMemo(
+    () => debounce(fetchSuggestions, 200),
+    [fetchSuggestions]
+  );
+
   const handleGearInput = useCallback((categoryId: number, index: number, field: keyof Gear, value: string | number) => {
-    if (field === 'name' && typeof value === 'string' && value.length > 2) {
-      fetchSuggestions(value, categoryId)
-    } else if (field === 'name') {
-      setSuggestions(prev => ({ ...prev, [categoryId]: [] }))
-    }
     setGearInputs(prevInputs => {
       const updatedGears = [...prevInputs[categoryId]]
-      const updatedGear = { ...updatedGears[index] }
-
-      if (field === 'quantity') {
-        updatedGear.quantity = Number(value)
-      } else if (field === 'weight') {
-        updatedGear.weight = Number(value)
-      } else if (field === 'name') {
-        updatedGear.name = value as string;
-        if (updatedGear.type === undefined) {
-          updatedGear.id = 0
-        }
-      } else {
-        updatedGear[field as keyof Gear] = value as never
+      const updatedGear = { ...updatedGears[index], [field]: value }
+      if (field === 'name' && updatedGear.type === undefined) {
+        updatedGear.id = 0
       }
-
       updatedGears[index] = updatedGear
       return { ...prevInputs, [categoryId]: updatedGears }
     })
-  }, [fetchSuggestions])
+
+    if (field === 'name' && typeof value === 'string') {
+      debouncedFetchSuggestions(value, categoryId)
+    }
+  }, [debouncedFetchSuggestions])
 
   const handleGearSelect = useCallback((categoryId: number, index: number, gear: Gear) => {
     setGearInputs(prevInputs => {
@@ -145,8 +183,7 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
         avgRating: 0,
         reviewCount: 0
       };
-      const updatedGears = [...prevInputs[categoryId], newGear];
-      return { ...prevInputs, [categoryId]: updatedGears };
+      return { ...prevInputs, [categoryId]: [...prevInputs[categoryId], newGear] };
     })
   }, [])
 
@@ -160,20 +197,16 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
 
   const handleSubmit = useCallback(() => {
     const allGears = Object.values(gearInputs).flat().filter(gear => gear.name.trim() !== '').map(gear => {
-      if (gear.id === 0) { // 自由記述の場合
-        return {
-          ...gear,
-          type: undefined, // 自由記述の場合はタイプをundefinedにする
-          altCategoryId: gear.categoryId // カテゴリIDを設定
-        };
-      } else {
-        // 既存のギアの場合
-        return gear;
+      if (gear.id === 0) {
+        return { ...gear, type: undefined, altCategoryId: gear.categoryId };
       }
+      return gear;
     });
     onAddGears(allGears)
     onClose()
   }, [gearInputs, onAddGears, onClose])
+
+  const memoizedCategories = useMemo(() => categories, [categories]);
 
   return (
     <Modal
@@ -190,10 +223,10 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
         </div>
       ) : (
         <>
-          {categories.map((category) => (
+          {memoizedCategories.map((category) => (
             <div key={category.id} className="mb-6 border-b pb-4">
               <h3 className="text-xl font-semibold mb-2">{category.name}</h3>
-              <div className="grid grid-cols-4 gap-2 mb-2 font-semibold">
+              <div className="grid grid-cols-5 gap-2 mb-2 font-semibold">
                 <div>ギア名</div>
                 <div>単品重量(g)</div>
                 <div>数量</div>
@@ -201,43 +234,21 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
                 <div>操作</div>
               </div>
               {gearInputs[category.id]?.map((gear, index) => (
-                <div key={index} className="mb-2 grid grid-cols-5 gap-2">
-                  <input
-                    type="text"
-                    value={gear.name}
-                    onChange={(e) => handleGearInput(category.id, index, 'name', e.target.value)}
-                    placeholder="ギア名"
-                    className="p-2 border rounded"
-                  />
-                  <input
-                    type="number"
-                    value={gear.weight === 0 ? '' : gear.weight}
-                    onChange={(e) => handleGearInput(category.id, index, 'weight', Number(e.target.value))}
-                    placeholder="単品重量"
-                    className="p-2 border rounded"
-                  />
-                  <input
-                    type="number"
-                    value={gear.quantity}
-                    onChange={(e) => handleGearInput(category.id, index, 'quantity', Number(e.target.value))}
-                    min="1"
-                    placeholder="数量"
-                    className="p-2 border rounded"
-                  />
-                  <div className="p-2 border rounded bg-gray-100">
-                    {gear.weight * (gear.quantity ?? 1)}
-                  </div>
-                  <button
-                    onClick={() => handleRemoveGear(category.id, index)}
-                    className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
-                  >
-                    削除
-                  </button>
-                </div>
+                <GearRow
+                  key={`${category.id}-${index}`}
+                  gear={gear}
+                  categoryId={category.id}
+                  index={index}
+                  onInput={handleGearInput}
+                  onRemove={handleRemoveGear}
+                />
               ))}
-              {suggestions[category.id]?.length > 0 && (
+              {(suggestions[category.id]?.length > 0 || isFetchingSuggestions[category.id]) && (
                 <ul className="mb-2 border rounded max-h-40 overflow-y-auto">
-                  {suggestions[category.id].map((suggestion) => (
+                  {isFetchingSuggestions[category.id] && (
+                    <li className="p-2 text-gray-500">サジェストを取得中...</li>
+                  )}
+                  {suggestions[category.id]?.map((suggestion) => (
                     <li
                       key={suggestion.id}
                       onClick={() => handleGearSelect(category.id, gearInputs[category.id].length - 1, suggestion)}
@@ -272,6 +283,6 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
           キャンセル
         </button>
       </div>
-    </Modal >
+    </Modal>
   )
 }

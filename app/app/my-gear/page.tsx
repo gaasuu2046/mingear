@@ -11,14 +11,53 @@ import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 
 async function getPersonalGearList(userId: string) {
-  const personalGearList = await prisma.personalGear.findMany({
+  return prisma.personalGear.findMany({
     where: { userId },
-    include: { 
-      category: true, 
-      brand: true 
+    select: {
+      id: true,
+      name: true,
+      weight: true,
+      img: true,
+      gearId: true,
+      userId: true,
+      categoryId: true,
+      price: true,
+      productUrl: true,
+      createdAt: true,
+      updatedAt: true,
+      brandId: true,
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      brand: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   })
-  return personalGearList
+}
+
+async function getCategories() {
+  return prisma.category.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+  })
+}
+
+async function getBrands() {
+  return prisma.brand.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+  })
 }
 
 export default async function MyGearPage() {
@@ -29,8 +68,8 @@ export default async function MyGearPage() {
         <div className="text-center p-8 bg-white shadow-md rounded-lg">
           <h1 className="text-2xl font-bold mb-4">ログインが必要です</h1>
           <p className="mb-6">所有ギア一覧を表示するにはログインしてください。</p>
-          <Link 
-            href="/auth/signin" 
+          <Link
+            href="/auth/signin"
             className="bg-blue-500 hover:bg-blue-600 text-black font-bold py-2 px-4 rounded transition duration-300"
           >
             ログインページへ
@@ -40,13 +79,21 @@ export default async function MyGearPage() {
     )
   }
 
-  const personalGearList = await getPersonalGearList(session.user.id)
+  const [personalGearList, categories, brands] = await Promise.all([
+    getPersonalGearList(session.user.id),
+    getCategories(),
+    getBrands(),
+  ])
 
   return (
     <div className="container px-2 py-8">
       <RefreshOnRedirect />
       <h1 className="text-3xl font-bold mb-6">所有ギア一覧</h1>
-      <PersonalGearList initialGearList={personalGearList} />
+      <PersonalGearList
+        initialGearList={personalGearList}
+        initialCategories={categories}
+        initialBrands={brands}
+      />
     </div>
   )
 }

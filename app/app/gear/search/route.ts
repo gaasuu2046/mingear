@@ -1,6 +1,6 @@
 // app/gear/search/route.ts
 import { Prisma } from '@prisma/client'
-import { PersonalGear, Category, Brand, Gear, Review } from '@prisma/client'
+import { Category, Brand, Gear, Review } from '@prisma/client'
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 
@@ -16,11 +16,22 @@ interface publicGearWithRelations extends Gear {
 interface FormattedPublicGear extends publicGearWithRelations {
   type: 'public';
 }
-interface PersonalGearWithRelations extends PersonalGear {
-  category: Category;
-  brand: Brand | null;
-}
 
+interface PersonalGearWithRelations {
+  id: number;
+  name: string;
+  weight: number;
+  img: string | null;
+  gearId: number | null;
+  category: {
+    id: number;
+    name: string;
+  };
+  brand: {
+    id: number;
+    name: string;
+  } | null;
+}
 
 export async function GET(request: Request) {
   const session = await getServerSession(authOptions)
@@ -62,7 +73,6 @@ export async function GET(request: Request) {
           }
         : {},
       category ? { category: { name: { equals: category, mode: 'insensitive' } } } : {},
-      // brand ? { brand: { name: { equals: brand, mode: 'insensitive' } } } : {},
     ],
   }
 

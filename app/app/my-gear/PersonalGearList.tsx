@@ -5,7 +5,9 @@
 import { PersonalGear, Gear, Category, Brand } from '@prisma/client'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useCallback, useMemo } from 'react'
+import React from 'react'
+import { FixedSizeList as List } from 'react-window'
 
 import DeleteButton from './DeleteButton'
 
@@ -18,66 +20,40 @@ interface PersonalGearWithRelations extends PersonalGear {
   category: Category;
   brand: Brand | null;
 }
+
 interface PersonalGearListProps {
   initialGearList: PersonalGearWithRelations[]
+  initialCategories: Category[]
+  initialBrands: Brand[]
 }
 
-export default function PersonalGearList({ initialGearList }: PersonalGearListProps) {
+export default function PersonalGearList({ initialGearList, initialCategories, initialBrands }: PersonalGearListProps) {
   const [gearList, setGearList] = useState(initialGearList)
   const [showAddForm, setShowAddForm] = useState(false)
-  const [name, setName] = useState('')
-  const [weight, setWeight] = useState('')
-  const [brand, setBrand] = useState('')
-  const [category, setCategory] = useState('')
-  const [categoryID, setCategoryID] = useState('')
-  const [img, setImg] = useState('')
-  const [price, setPrice] = useState('')
-  const [productUrl, setProductUrl] = useState('')
-  const [categories, setCategories] = useState<{ id: string, name: string }[]>([])
-  const [newBrand, setNewBrand] = useState('');
-  const [isNewBrand, setIsNewBrand] = useState(false);
-  const [brands, setBrands] = useState<{ id: string, name: string }[]>([]);
-  const [brandID, setBrandID] = useState('');
-  const [isSearchSuggestionUsed, setIsSearchSuggestionUsed] = useState(false);
-  const [isGearAdded, setIsGearAdded] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    weight: '',
+    brand: '',
+    category: '',
+    categoryID: '',
+    img: '',
+    price: '',
+    productUrl: '',
+  })
+  const [categories] = useState(initialCategories)
+  const [brands] = useState(initialBrands)
+  const [newBrand, setNewBrand] = useState('')
+  const [isNewBrand, setIsNewBrand] = useState(false)
+  const [brandID, setBrandID] = useState('')
+  const [isSearchSuggestionUsed, setIsSearchSuggestionUsed] = useState(false)
+  const [isGearAdded, setIsGearAdded] = useState(false)
 
-  useEffect(() => {
-    const fetchBrands = async () => {
-      try {
-        const response = await fetch('/api/brand');
-        if (response.ok) {
-          const data = await response.json();
-          setBrands(data);
-        } else {
-          console.error('ブランドの取得に失敗しました');
-        }
-      } catch (error) {
-        console.error('ブランドの取得中にエラーが発生しました:', error);
-      }
-    };
-    fetchBrands();
-  }, []);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch('/api/categories')
-        if (response.ok) {
-          const data = await response.json()
-          setCategories(data)
-        } else {
-          console.error('カテゴリーの取得に失敗しました')
-        }
-      } catch (error) {
-        console.error('カテゴリーの取得中にエラーが発生しました:', error)
-      }
-    }
-    fetchCategories()
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
   }, [])
 
-
-  // サジェスチョンから選択されたギアを所有ギアとして登録する処理
-  const handleAddGear = async (gear: Gear) => {
+  const handleAddGear = useCallback(async (gear: Gear) => {
     setIsSearchSuggestionUsed(true)
     const response = await fetch('/api/my-gear', {
       method: 'POST',
@@ -96,66 +72,114 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
 
     if (response.ok) {
       const newPersonalGear = await response.json()
-      setGearList([...gearList, newPersonalGear])
-      setIsGearAdded(true); // ギアが正常に追加されたことを示す
+      setGearList(prev => [...prev, newPersonalGear])
+      setIsGearAdded(true)
       resetForm()
     }
-  }
-  const handleNameChange = (newName: string) => {
-    setName(newName);
-    setIsSearchSuggestionUsed(false);
-  };
+  }, [])
 
-  const handleAddCustomGear = async (e: React.FormEvent) => {
-    if (isGearAdded) {
-      // すでにギアが追加されている場合は、この関数を終了します
-      return;
-    }
+  const handleNameChange = useCallback((newName: string) => {
+    setFormData(prev => ({ ...prev, name: newName }))
+    setIsSearchSuggestionUsed(false)
+  }, [])
+
+  const handleAddCustomGear = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
+    if (isGearAdded) return
 
     const response = await fetch('/api/my-gear', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name,
-        weight: parseInt(weight),
+        name: formData.name,
+        weight: parseInt(formData.weight),
         brandID: isNewBrand ? null : brandID,
         brandName: isNewBrand ? newBrand : null,
-        categoryId: parseInt(categoryID),
-        img,
-        price: price ? parseInt(price) : null,
-        productUrl,
+        categoryId: parseInt(formData.categoryID),
+        img: formData.img,
+        price: formData.price ? parseInt(formData.price) : null,
+        productUrl: formData.productUrl,
       }),
     })
 
     if (response.ok) {
       const newPersonalGear = await response.json()
-      setGearList([...gearList, newPersonalGear])
+      setGearList(prev => [...prev, newPersonalGear])
       resetForm()
     }
-  }
+  }, [formData, isGearAdded, isNewBrand, brandID, newBrand])
 
-  const resetForm = () => {
-    setName('')
-    setWeight('')
-    setBrand('')
-    setCategory('')
-    setCategoryID('')
-    setImg('')
-    setPrice('')
-    setProductUrl('')
+  const resetForm = useCallback(() => {
+    setFormData({
+      name: '',
+      weight: '',
+      brand: '',
+      category: '',
+      categoryID: '',
+      img: '',
+      price: '',
+      productUrl: '',
+    })
     setShowAddForm(false)
-  }
+    setIsNewBrand(false)
+    setBrandID('')
+    setNewBrand('')
+    setIsGearAdded(false)
+    setIsSearchSuggestionUsed(false)
+  }, [])
 
-  // ギアをカテゴリ毎にグループ化
-  const gearByCategory = gearList.reduce((acc, item) => {
-    const category = item.category?.name || 'その他'
-    if (!acc[category]) {
-      acc[category] = []
-    }
-    acc[category].push(item)
-    return acc
-  }, {} as Record<string, PersonalGear[]>)
+  const gearByCategory = useMemo(() => {
+    return gearList.reduce((acc, item) => {
+      const category = item.category?.name || 'その他'
+      if (!acc[category]) {
+        acc[category] = []
+      }
+      acc[category].push(item)
+      return acc
+    }, {} as Record<string, PersonalGearWithRelations[]>)
+  }, [gearList])
+
+  const GearItem = useCallback(({ item }: { item: PersonalGearWithRelations }) => (
+    <div className="border rounded-lg shadow-sm">
+      <Link href={`/gear/${item.gearId}`}>
+        <h3 className="text-sm font-semibold mb-2 line-clamp-2 h-10">{item.name}</h3>
+        <Image
+          src={item.img || '/logo.png'}
+          alt={item.name}
+          width={200}
+          height={100}
+          className="w-full h-32 sm:h-48 object-cover rounded-md mb-4"
+          loading="lazy"
+        />
+      </Link>
+      <p className="text-gray-600">重量: {item.weight}g</p>
+      <div className="p-1 flex flex-col">
+        <AddToPackingListButton
+          gearId={item.id}
+          type="personal"
+          className="w-full text-sm"
+        />
+        <DeleteButton
+          id={item.id}
+          className="w-full text-sm"
+        />
+      </div>
+    </div>
+  ), [])
+
+  const MemoizedGearItem = useMemo(() => React.memo(GearItem), [GearItem])
+
+  const Row = useCallback(({ index, style }: { index: number, style: React.CSSProperties }) => {
+    const [category, items] = Object.entries(gearByCategory)[index]
+    return (
+      <div style={style}>
+        <h2 className="text-2xl font-semibold mb-4">{category}</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {items.map(item => <MemoizedGearItem key={item.id} item={item} />)}
+        </div>
+      </div>
+    )
+  }, [gearByCategory, MemoizedGearItem])
 
   return (
     <div>
@@ -177,15 +201,16 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
               onAddGear={handleAddGear}
               type="public"
               onNameChange={handleNameChange}
-              searchLimit={5} inputClassName='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black'
+              searchLimit={5}
+              inputClassName='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black'
             />
 
             <FormField
               label="重量 (g)"
               id="weight"
               type="number"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
+              value={formData.weight}
+              onChange={handleInputChange}
               placeholder="178"
               required={!isSearchSuggestionUsed}
               min="0"
@@ -196,11 +221,11 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
                 <AutocompleteField
                   label="ブランド"
                   id="brand"
-                  value={brand}
+                  value={formData.brand}
                   onChange={(value) => {
-                    setBrand(value);
-                    const selectedBrand = brands.find(b => b.name === value);
-                    setBrandID(selectedBrand ? selectedBrand.id : '');
+                    setFormData(prev => ({ ...prev, brand: value }))
+                    const selectedBrand = brands.find(b => b.name === value)
+                    setBrandID(selectedBrand ? selectedBrand.id.toString() : '')
                   }}
                   options={brands.map(b => b.name)}
                   placeholder="THERM-A-REST"
@@ -244,11 +269,14 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
               label="カテゴリー"
               id="category"
               type="select"
-              value={category}
+              value={formData.category}
               onChange={(e) => {
-                setCategory(e.target.value)
                 const selectedCategory = categories.find(c => c.name === e.target.value)
-                setCategoryID(selectedCategory ? selectedCategory.id : '')
+                setFormData(prev => ({
+                  ...prev,
+                  category: e.target.value,
+                  categoryID: selectedCategory ? selectedCategory.id.toString() : ''
+                }))
               }}
               required={!isSearchSuggestionUsed}
               options={categories.map(c => c.name)}
@@ -257,8 +285,8 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
             <FormField
               label="画像URL"
               id="img"
-              value={img}
-              onChange={(e) => setImg(e.target.value)}
+              value={formData.img}
+              onChange={handleInputChange}
               placeholder="https://img.sample.com"
             />
 
@@ -266,8 +294,8 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
               label="価格 (円)"
               id="price"
               type="number"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              value={formData.price}
+              onChange={handleInputChange}
               placeholder="38500"
               min="0"
               step="1"
@@ -277,8 +305,8 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
               label="外部ページの製品へのリンク"
               id="productUrl"
               type="text"
-              value={productUrl}
-              onChange={(e) => setProductUrl(e.target.value)}
+              value={formData.productUrl}
+              onChange={handleInputChange}
               placeholder="https://sample.com"
             />
 
@@ -291,43 +319,14 @@ export default function PersonalGearList({ initialGearList }: PersonalGearListPr
           </form>
         </div>
       )}
-      {Object.entries(gearByCategory).map(([category, items]) => (
-        <div key={category} className="mb-1">
-          <h2 className="text-2xl font-semibold mb-4">{category}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {items.map((item) => (
-              <div key={item.id} className="border rounded-lg shadow-sm">
-                <Link href={`/gear/${item.gearId}`}>
-                  <h3 className="text-sm font-semibold mb-2 line-clamp-2 h-10">{item.name}</h3>
-                  <Image
-                    src={item.img || '/logo.png'}
-                    alt={item.name}
-                    width={200}
-                    height={100}
-                    className="w-full h-32 sm:h-48 object-cover rounded-md mb-4"
-                  />
-                </Link>
-                <p className="text-gray-600">重量: {item.weight}g</p>
-                <div className="p-1 flex flex-col">
-                  <div className="flex-1 mb-2 sm:mb-0">
-                    <AddToPackingListButton
-                      gearId={item.id}
-                      type="personal"
-                      className="w-full text-sm"
-                    />
-                  </div>
-                  <div className="flex-1 mb-2 sm:mb-0">
-                    <DeleteButton
-                      id={item.id}
-                      className="w-full text-sm"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
+      <List
+        height={600}
+        itemCount={Object.keys(gearByCategory).length}
+        itemSize={350}
+        width="100%"
+      >
+        {Row}
+      </List>
     </div>
   )
 }

@@ -24,7 +24,22 @@ export default function GearForm() {
   const [newBrand, setNewBrand] = useState('');
   const [isNewBrand, setIsNewBrand] = useState(false);
   const [isImageValid, setIsImageValid] = useState(true);
+  const [brandError, setBrandError] = useState('');
+  const [showNewBrandConfirmation, setShowNewBrandConfirmation] = useState(false);
 
+  const handleBrandChange = (value: string) => {
+    setBrand(value);
+    const selectedBrand = brands.find(b => b.name === value);
+    if (selectedBrand) {
+      setBrandID(selectedBrand.id);
+      setBrandError('');
+      setShowNewBrandConfirmation(false);
+    } else {
+      setBrandID('');
+      setBrandError('既存のブランドにありません。');
+      setShowNewBrandConfirmation(true);
+    }
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -80,6 +95,11 @@ export default function GearForm() {
     if (!isValidImageUrl) {
       setIsImageValid(false);
       alert('指定された画像URLが無効です。有効な画像URLを入力してください。');
+      return;
+    }
+
+    if (!isNewBrand && !brandID) {
+      alert('既存のブランドを選択するか、新規ブランドとして登録してください。');
       return;
     }
 
@@ -179,22 +199,53 @@ export default function GearForm() {
               label="ブランド"
               id="brand"
               value={brand}
-              onChange={(value) => {
-                setBrand(value);
-                const selectedBrand = brands.find(b => b.name === value);
-                setBrandID(selectedBrand ? selectedBrand.id : '');
-              }}
+              onChange={handleBrandChange}
+              // onChange={(value) => {
+              //   setBrand(value);
+              //   const selectedBrand = brands.find(b => b.name === value);
+              //   setBrandID(selectedBrand ? selectedBrand.id : '');
+              // }}
               options={brands.map(b => b.name)}
               placeholder="THERM-A-REST"
               required
             />
-            <button
+            {brandError && (
+              <p className="text-red-500 text-sm mt-1">{brandError}</p>
+            )}
+            {showNewBrandConfirmation && (
+              <div className="mt-2">
+                <p className="text-sm">新規ブランドとして登録しますか？</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsNewBrand(true);
+                    setNewBrand(brand);
+                    setShowNewBrandConfirmation(false);
+                  }}
+                  className="text-blue-500 hover:underline mr-4"
+                >
+                  はい
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBrand('');
+                    setBrandError('');
+                    setShowNewBrandConfirmation(false);
+                  }}
+                  className="text-red-500 hover:underline"
+                >
+                  いいえ
+                </button>
+              </div>
+            )}
+            {/* <button
               type="button"
               onClick={() => setIsNewBrand(true)}
               className="text-blue-500 hover:underline"
             >
               新しいブランドを追加
-            </button>
+            </button> */}
           </>
         ) : (
           <>

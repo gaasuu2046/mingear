@@ -1,7 +1,9 @@
 // app/api/gear/route.ts
+import { Prisma } from '@prisma/client'
 import { NextResponse } from 'next/server'
 
 import prisma from '@/lib/prisma'
+
 
 export async function GET() {
   const gears = await prisma.gear.findMany({
@@ -11,38 +13,46 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json()
-  const { name, description, categoryID, brandID, brandName, img, price, weight, productUrl } = body
-  
-  let brand;
-  if (brandID) {
-    // 既存のブランドを使用
-    brand = { connect: { id: brandID } }
-  } else if (brandName) {
-    // 新しいブランドを作成
-    brand = { create: { name: brandName } }
-  } else {
-    throw new Error('brandID または brandName が必要です')
-  }
-  
-  const gear = await prisma.gear.create({
-    data: {
-      name,
-      description,
-      img,
-      price,
-      weight,
-      category: {
-        connect: { id: categoryID }
-      },
-      brand: brand,
-      productUrl
-    },
-    include: {
-      category: true,
-      brand: true
+  try {
+    const body = await request.json()
+    const { name, description, categoryID, brandID, brandName, img, price, weight, productUrl } = body
+    
+    let brand;
+    if (brandID) {
+      brand = { connect: { id: parseInt(brandID, 10) } }
+    } else if (brandName) {
+      brand = { create: { name: brandName } }
+    } else {
+      return NextResponse.json({ error: 'brandID または brandName が必要です' }, { status: 400 });
     }
-  })
+    
+    const gear = await prisma.gear.create({
+      data: {
+        name,
+        description,
+        img,
+        price: price ? parseInt(price, 10) : null,
+        weight: parseInt(weight, 10),
+        category: {
+          connect: { id: parseInt(categoryID, 10) }
+        },
+        brand: brand,
+        productUrl
+      },
+      include: {
+        category: true,
+        brand: true
+      }
+    })
 
-  return NextResponse.json(gear, { status: 201 })
+    return NextResponse.json(gear, { status: 201 })
+  } catch (error) {
+    console.error('Error creating gear:', error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        return NextResponse.json({ error: '同じ名前のギアが既に存在します。' }, { status: 400 })
+      }
+    }
+    return NextResponse.json({ error: 'ギアの作成中にエラーが発生しました。' }, { status: 500 })
+  }
 }

@@ -1,7 +1,7 @@
 // app/my-packing-list/PackingListClientWrapper.tsx
 "use client";
 
-import React, { useState } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import { FaChevronDown, FaChevronUp, FaCopy, FaEdit, FaLine, FaPlusCircle } from 'react-icons/fa';
 
 import GearAddModal from './GearAddModal'
@@ -9,7 +9,6 @@ import PackingListFormModal from './PackingListFormModal'
 
 import { PackingList, Gear, Trip, PackingListItem } from '@/app/my-packing-list/types';
 import { SEASONS } from '@/app/types/season'
-
 
 interface PackingListClientWrapperProps {
   initialPackingLists: PackingList[];
@@ -22,27 +21,25 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
   const [selectedList, setSelectedList] = useState<PackingList | null>(null)
   const [isGearModalOpen, setIsGearModalOpen] = useState(false)
   const [isFormModalOpen, setIsFormModalOpen] = useState(false)
-  // const [gearsToReview, setGearsToReview] = useState<Gear[]>([])
   const [expandedLists, setExpandedLists] = useState<number[]>([])
-  const [, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
-
-  const handleNewList = () => {
+  const handleNewList = useCallback(() => {
     setSelectedList(null)
     setIsFormModalOpen(true)
-  }
+  }, [])
 
-  const handleListClick = (list: PackingList) => {
+  const handleListClick = useCallback((list: PackingList) => {
     setSelectedList(list)
     setIsGearModalOpen(true)
-  }
+  }, [])
 
-  const handleEditList = (list: PackingList) => {
+  const handleEditList = useCallback((list: PackingList) => {
     setSelectedList(list)
     setIsFormModalOpen(true)
-  }
+  }, [])
 
-  const handleFormSubmit = async (formData: Partial<PackingList>) => {
+  const handleFormSubmit = useCallback(async (formData: Partial<PackingList>) => {
     try {
       const url = selectedList
         ? `/api/packing-list/${selectedList.id}`
@@ -69,9 +66,9 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
     } catch (error) {
       console.error('Error saving packing list:', error);
     }
-  }
+  }, [selectedList])
 
-  const handleAddGears = async (newGears: Gear[]) => {
+  const handleAddGears = useCallback(async (newGears: Gear[]) => {
     if (!selectedList) return;
 
     try {
@@ -96,20 +93,17 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
       );
 
       setIsGearModalOpen(false);
-      // setGearsToReview(newGears.filter(gear => gear.type === 'public'));
-      // setShowReviewForm(true);
-
     } catch (error) {
       console.error('Error adding gears to packing list:', error);
     }
-  }
-  // 選択されたリストの既存のギアを取得する関数
-  const getExistingGears = (list: PackingList): Gear[] => {
+  }, [selectedList])
+
+  const getExistingGears = useCallback((list: PackingList): Gear[] => {
     return list.items.map(item => {
       const gear = item.gear || item.personalGear;
-      const isCustomGear = !gear; // ギアが存在しない場合はカスタムギアとみなす
+      const isCustomGear = !gear;
       return {
-        id: isCustomGear ? 0 : (gear?.id ?? 0), // 自由記述の場合はIDを0に
+        id: isCustomGear ? 0 : (gear?.id ?? 0),
         name: item.altName ?? gear?.name ?? '',
         weight: item.altWeight ?? gear?.weight ?? 0,
         quantity: item.quantity,
@@ -124,33 +118,37 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
         reviewCount: gear?.reviewCount || 0,
       };
     });
-  };
-  const calculateTotalWeight = (list: PackingList): number => {
+  }, [])
+
+  const calculateTotalWeight = useCallback((list: PackingList): number => {
     return list.items.reduce((total, item) => {
       const weight = item.altWeight ?? item.gear?.weight ?? item.personalGear?.weight ?? 0;
       return total + weight * item.quantity;
     }, 0);
-  };
+  }, [])
 
-  const toggleListExpansion = (listId: number) => {
+  const toggleListExpansion = useCallback((listId: number) => {
     setExpandedLists(prev =>
       prev.includes(listId)
         ? prev.filter(id => id !== listId)
         : [...prev, listId]
     )
-  }
+  }, [])
 
-  const renderGearName = (item: PackingListItem): string => {
+  const renderGearName = useCallback((item: PackingListItem): string => {
     return item.altName ?? item.gear?.name ?? item.personalGear?.name ?? '未設定のギア';
-  };
+  }, [])
 
-
-  const renderGearWeight = (item: PackingListItem): number => {
+  const renderGearWeight = useCallback((item: PackingListItem): number => {
     return item.altWeight ?? item.gear?.weight ?? item.personalGear?.weight ?? 0;
-  };
+  }, [])
 
-  // パッキングリストのテキストを生成する関数
-  const generatePackingListText = (list: PackingList) => {
+  const renderRelatedTrips = useCallback((list: PackingList) => {
+    if (!list.trips || list.trips.length === 0) return '未設定';
+    return list.trips.map(trip => trip.name).join(', ');
+  }, [])
+
+  const generatePackingListText = useCallback((list: PackingList) => {
     let text = `パッキングリスト: ${list.name}\n`;
     text += `シーズン: ${SEASONS.find(season => season.en === list.season)?.ja || '未設定'}\n`;
     text += `総重量: ${calculateTotalWeight(list)}g\n`;
@@ -160,33 +158,27 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
       text += `- ${renderGearName(item)}: ${renderGearWeight(item)}g (${item.quantity}個)\n`;
     });
     return text;
-  };
+  }, [calculateTotalWeight, renderGearName, renderGearWeight, renderRelatedTrips])
 
-  // コピー機能
-  const handleCopyList = async (list: PackingList) => {
+  const handleCopyList = useCallback(async (list: PackingList) => {
     const text = generatePackingListText(list);
     try {
       await navigator.clipboard.writeText(text);
-      setShowPopup(true); // ポップアップを表示
-      setTimeout(() => setShowPopup(false), 2000); // 2秒後に非表示
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 2000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
-  };
+  }, [generatePackingListText])
 
-  // LINE共有機能
-  const handleShareToLine = (list: PackingList) => {
+  const handleShareToLine = useCallback((list: PackingList) => {
     const text = encodeURIComponent(generatePackingListText(list));
     const lineUrl = `https://line.me/R/msg/text/?${text}`;
     window.open(lineUrl, '_blank');
-  };
+  }, [generatePackingListText])
 
-  // 関連する旅程を表示する関数
-  const renderRelatedTrips = (list: PackingList) => {
-    if (!list.trips || list.trips.length === 0) return '未設定';
 
-    return list.trips.map(trip => trip.name).join(', ');
-  };
+  const memoizedPackingLists = useMemo(() => packingLists, [packingLists]);
 
   return (
     <div className="container mx-auto p-2">
@@ -215,10 +207,9 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
             </tr>
           </thead>
           <tbody>
-            {packingLists.map((list) => (
+            {memoizedPackingLists.map((list) => (
               <React.Fragment key={list.id}>
-
-                <tr key={list.id} className="border-b hover:bg-gray-50">
+                <tr className="border-b hover:bg-gray-50">
                   <td className="px-1 py-2">
                     <div className="flex items-center">
                       <button
@@ -243,20 +234,6 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
                   <td className="px-2 py-2 text-center">
                     <div className="flex justify-center space-x-4">
                       <button
-                        onClick={() => handleCopyList(list)}
-                        className="bg-blue-500 text-white px-2 py-1.5 rounded hover:bg-blue-600 mr-1 text-sm"
-                        title="リストをコピー"
-                      >
-                        <FaCopy />
-                      </button>
-                      <button
-                        onClick={() => handleShareToLine(list)}
-                        className="bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 mr-1 text-sm"
-                        title="LINEで共有"
-                      >
-                        <FaLine />
-                      </button>
-                      <button
                         onClick={() => handleListClick(list)}
                         className="bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 mr-1 text-sm"
                         title="ギアの編集"
@@ -269,6 +246,20 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
                         title="パッキングリスト情報編集"
                       >
                         <FaEdit />
+                      </button>
+                      <button
+                        onClick={() => handleCopyList(list)}
+                        className="bg-blue-500 text-white px-2 py-1.5 rounded hover:bg-blue-600 mr-1 text-sm"
+                        title="リストをコピー"
+                      >
+                        <FaCopy />
+                      </button>
+                      <button
+                        onClick={() => handleShareToLine(list)}
+                        className="bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 mr-1 text-sm"
+                        title="LINEで共有"
+                      >
+                        <FaLine />
                       </button>
                     </div>
                   </td>
@@ -325,6 +316,12 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
         packingList={selectedList}
         trips={trips}
       />
+
+      {showPopup && (
+        <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg">
+          リストをコピーしました！
+        </div>
+      )}
     </div>
   )
 }
