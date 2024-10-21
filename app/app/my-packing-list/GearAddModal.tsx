@@ -31,40 +31,81 @@ const customStyles = {
   },
 };
 
-const GearRow = React.memo(function GearRow({ categoryId, index, gear, onInput, onRemove }: { categoryId: number, index: number, gear: Gear, onInput: (categoryId: number, index: number, field: keyof Gear, value: string | number) => void, onRemove: (categoryId: number, index: number) => void }) {
+const GearRow = React.memo(function GearRow({
+  categoryId,
+  index,
+  gear,
+  onInput,
+  onRemove,
+  isActive,
+  setActiveInput,
+  suggestions,
+  isFetchingSuggestions,
+  onGearSelect
+}: {
+  categoryId: number,
+  index: number,
+  gear: Gear,
+  onInput: (categoryId: number, index: number, field: keyof Gear, value: string | number) => void,
+  onRemove: (categoryId: number, index: number) => void,
+  isActive: boolean,
+  setActiveInput: (input: { categoryId: number; index: number } | null) => void,
+  suggestions: Gear[],
+  isFetchingSuggestions: boolean,
+  onGearSelect: (categoryId: number, index: number, gear: Gear) => void
+}) {
   return (
-    <div className="mb-2 grid grid-cols-5 gap-2">
-      <input
-        type="text"
-        value={gear.name}
-        onChange={(e) => onInput(categoryId, index, 'name', e.target.value)}
-        placeholder="ギア名"
-        className="p-2 border rounded"
-      />
-      <input
-        type="number"
-        value={gear.weight === 0 ? '' : gear.weight}
-        onChange={(e) => onInput(categoryId, index, 'weight', Number(e.target.value))}
-        placeholder="単品重量"
-        className="p-2 border rounded"
-      />
-      <input
-        type="number"
-        value={gear.quantity}
-        onChange={(e) => onInput(categoryId, index, 'quantity', Number(e.target.value))}
-        min="1"
-        placeholder="数量"
-        className="p-2 border rounded"
-      />
-      <div className="p-2 border rounded bg-gray-100">
-        {gear.weight * (gear.quantity ?? 1)}
+    <div className="mb-2">
+      <div className="grid grid-cols-5 gap-2">
+        <input
+          type="text"
+          value={gear.name}
+          onChange={(e) => onInput(categoryId, index, 'name', e.target.value)}
+          onFocus={() => setActiveInput({ categoryId, index })}
+          placeholder="ギア名"
+          className="p-2 border rounded"
+        />
+        <input
+          type="number"
+          value={gear.weight === 0 ? '' : gear.weight}
+          onChange={(e) => onInput(categoryId, index, 'weight', Number(e.target.value))}
+          placeholder="単品重量"
+          className="p-2 border rounded"
+        />
+        <input
+          type="number"
+          value={gear.quantity}
+          onChange={(e) => onInput(categoryId, index, 'quantity', Number(e.target.value))}
+          min="1"
+          placeholder="数量"
+          className="p-2 border rounded"
+        />
+        <div className="p-2 border rounded bg-gray-100">
+          {gear.weight * (gear.quantity ?? 1)}
+        </div>
+        <button
+          onClick={() => onRemove(categoryId, index)}
+          className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+        >
+          削除
+        </button>
       </div>
-      <button
-        onClick={() => onRemove(categoryId, index)}
-        className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
-      >
-        削除
-      </button>
+      {isActive && (suggestions.length > 0 || isFetchingSuggestions) && (
+        <ul className="mt-1 border rounded max-h-40 overflow-y-auto">
+          {isFetchingSuggestions && (
+            <li className="p-2 text-gray-500">サジェストを取得中...</li>
+          )}
+          {suggestions.map((suggestion) => (
+            <li
+              key={suggestion.id}
+              onClick={() => onGearSelect(categoryId, index, suggestion)}
+              className="p-2 hover:bg-gray-100 cursor-pointer"
+            >
+              {suggestion.name} ({suggestion.type === 'personal' ? '所有ギア' : 'カタログ'})
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 });
@@ -76,6 +117,8 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
   const [appElement, setAppElement] = useState<HTMLElement | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetchingSuggestions, setIsFetchingSuggestions] = useState<{ [key: number]: boolean }>({});
+  const [activeInput, setActiveInput] = useState<{ categoryId: number; index: number } | null>(null);
+
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -241,24 +284,13 @@ export default function GearAddModal({ isOpen, onClose, onAddGears, userId, exis
                   index={index}
                   onInput={handleGearInput}
                   onRemove={handleRemoveGear}
+                  isActive={activeInput?.categoryId === category.id && activeInput?.index === index}
+                  setActiveInput={setActiveInput}
+                  suggestions={suggestions[category.id] || []}
+                  isFetchingSuggestions={isFetchingSuggestions[category.id] || false}
+                  onGearSelect={handleGearSelect}
                 />
               ))}
-              {(suggestions[category.id]?.length > 0 || isFetchingSuggestions[category.id]) && (
-                <ul className="mb-2 border rounded max-h-40 overflow-y-auto">
-                  {isFetchingSuggestions[category.id] && (
-                    <li className="p-2 text-gray-500">サジェストを取得中...</li>
-                  )}
-                  {suggestions[category.id]?.map((suggestion) => (
-                    <li
-                      key={suggestion.id}
-                      onClick={() => handleGearSelect(category.id, gearInputs[category.id].length - 1, suggestion)}
-                      className="p-2 hover:bg-gray-100 cursor-pointer"
-                    >
-                      {suggestion.name} ({suggestion.type === 'personal' ? '所有ギア' : 'カタログ'})
-                    </li>
-                  ))}
-                </ul>
-              )}
               <button
                 onClick={() => handleAddGear(category.id)}
                 className="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"

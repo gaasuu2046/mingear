@@ -1,6 +1,7 @@
 // app/my-packing-list/PackingListClientWrapper.tsx
 "use client";
 
+import Link from 'next/link';
 import React, { useState, useCallback, useMemo } from 'react'
 import { FaChevronDown, FaChevronUp, FaCopy, FaEdit, FaLine, FaPlusCircle, FaTrash } from 'react-icons/fa';
 
@@ -213,13 +214,16 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
         <table className="min-w-full bg-white text-xs table-fixed">
           <thead className="bg-gray-100">
             <tr>
-              <th className="w-1/2 px-1 py-2 text-left">リスト名</th>
+              <th className="w-1/4 px-1 py-2 text-left">リスト名</th>
               <th className="w-1/12 px-1 py-2 text-left">シーズン</th>
-              <th className="w-1/6 px-1 py-2 text-left">関連する旅程</th>
+              <th className="w-1/4 px-1 py-2 text-left">関連する旅程</th>
               <th className="w-1/12 px-1 py-2 text-right">アイテム数</th>
               <th className="w-1/12 px-1 py-2 text-right">総重量</th>
               <th className="w-1/12 px-1 py-2 text-center">いいね数</th>
-              <th className="w-1/2 px-1 py-2 text-center">アクション</th>
+              <th className="w-1/12 px-1 py-2 text-center">ギア追加</th>
+              <th className="w-1/6 px-1 py-2 text-center">編集<br />(シーズン・旅程)</th>
+              <th className="w-1/6 px-1 py-2 text-center">共有</th>
+              <th className="w-1/12 px-1 py-2 text-center">削除</th>
             </tr>
           </thead>
           <tbody>
@@ -248,21 +252,25 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
                   <td className="px-1 py-2 text-right">{calculateTotalWeight(list)}g</td>
                   <td className="px-1 py-2 text-center">{list.likes?.length || 0}</td>
                   <td className="px-2 py-2 text-center">
-                    <div className="flex justify-center space-x-4">
-                      <button
-                        onClick={() => handleListClick(list)}
-                        className="bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 mr-1 text-sm"
-                        title="ギアの編集"
-                      >
-                        <FaPlusCircle />
-                      </button>
-                      <button
-                        onClick={() => handleEditList(list)}
-                        className="bg-yellow-500 text-white px-2 py-1.5 rounded hover:bg-yellow-600 text-sm"
-                        title="パッキングリスト情報編集"
-                      >
-                        <FaEdit />
-                      </button>
+                    <button
+                      onClick={() => handleListClick(list)}
+                      className="bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 mr-1 text-sm"
+                      title="ギアの編集"
+                    >
+                      <FaPlusCircle />
+                    </button>
+                  </td>
+                  <td className="px-2 py-2 text-center">
+                    <button
+                      onClick={() => handleEditList(list)}
+                      className="bg-yellow-500 text-white px-2 py-1.5 rounded hover:bg-yellow-600 text-sm"
+                      title="パッキングリスト情報編集"
+                    >
+                      <FaEdit />
+                    </button>
+                  </td>
+                  <td className="px-2 py-2 text-center">
+                    <div className="flex justify-center space-x-2">
                       <button
                         onClick={() => handleCopyList(list)}
                         className="bg-blue-500 text-white px-2 py-1.5 rounded hover:bg-blue-600 mr-1 text-sm"
@@ -272,19 +280,22 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
                       </button>
                       <button
                         onClick={() => handleShareToLine(list)}
-                        className="bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 mr-1 text-sm"
+                        className="bg-green-500 text-white px-2 py-1.5 rounded hover:bg-green-600 text-sm"
                         title="LINEで共有"
                       >
                         <FaLine />
                       </button>
-                      <button
-                        onClick={() => handleDeleteList(list.id)}
-                        className="bg-red-500 text-white px-2 py-1.5 rounded hover:bg-red-600 mr-1 text-sm"
-                        title="パッキングリストを削除"
-                      >
-                        <FaTrash />
-                      </button>
+
                     </div>
+                  </td>
+                  <td className="px-2 py-2 text-center">
+                    <button
+                      onClick={() => handleDeleteList(list.id)}
+                      className="bg-red-500 text-white px-2 py-1.5 rounded hover:bg-red-600 text-sm"
+                      title="パッキングリストを削除"
+                    >
+                      <FaTrash />
+                    </button>
                   </td>
                 </tr>
                 {expandedLists.includes(list.id) && (
@@ -295,20 +306,39 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
                         <ul className="space-y-2">
                           {list.items.map((item) => (
                             <li key={item.id} className="flex items-center">
-                              {(item.gear?.img || item.personalGear?.img) && (
-                                <img
-                                  src={(item.gear?.img ?? undefined) || (item.personalGear?.img ?? undefined)}
-                                  alt={renderGearName(item)}
-                                  className="w-8 h-8 object-cover mr-3 rounded-sm"
-                                />
+                              {item.gear ? (
+                                <div className="flex items-center">
+                                  <Link href={`/gear/${item.gear.id}`} className="flex items-center hover:underline">
+                                    {item.gear?.img && (
+                                      <img
+                                        src={item.gear.img}
+                                        alt={renderGearName(item)}
+                                        className="w-8 h-8 object-cover mr-3 rounded-sm"
+                                      />
+                                    )}
+                                    <span className="font-medium">{renderGearName(item)}</span>
+                                    <span className="ml-2 font-medium">
+                                      {renderGearWeight(item) * item.quantity}g
+                                      ({item.quantity}個)
+                                    </span>
+                                  </Link>
+                                </div>
+                              ) : (
+                                <div className="flex items-center">
+                                  {item.personalGear?.img && (
+                                    <img
+                                      src={item.personalGear.img}
+                                      alt={renderGearName(item)}
+                                      className="w-8 h-8 object-cover mr-3 rounded-sm"
+                                    />
+                                  )}
+                                  <span className="font-medium">{renderGearName(item)}</span>
+                                  <span className="ml-auto text-sm text-gray-600">
+                                    {renderGearWeight(item) * item.quantity}g
+                                    ({item.quantity}個)
+                                  </span>
+                                </div>
                               )}
-                              <div className="flex-1 flex items-center justify-between">
-                                <span className="font-medium">{renderGearName(item)}</span>
-                                <span className="text-sm text-gray-600">
-                                  {renderGearWeight(item) * item.quantity}g
-                                  ({item.quantity}個)
-                                </span>
-                              </div>
                             </li>
                           ))}
                         </ul>
@@ -322,15 +352,17 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
         </table>
       </div>
 
-      {isGearModalOpen && selectedList && (
-        <GearAddModal
-          isOpen={isGearModalOpen}
-          onClose={() => setIsGearModalOpen(false)}
-          onAddGears={handleAddGears}
-          userId={userId}
-          existingGears={getExistingGears(selectedList)}
-        />
-      )}
+      {
+        isGearModalOpen && selectedList && (
+          <GearAddModal
+            isOpen={isGearModalOpen}
+            onClose={() => setIsGearModalOpen(false)}
+            onAddGears={handleAddGears}
+            userId={userId}
+            existingGears={getExistingGears(selectedList)}
+          />
+        )
+      }
 
       <PackingListFormModal
         isOpen={isFormModalOpen}
@@ -340,11 +372,13 @@ export default function PackingListClientWrapper({ initialPackingLists, userId, 
         trips={trips}
       />
 
-      {showPopup && (
-        <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg">
-          リストをコピーしました！
-        </div>
-      )}
-    </div>
+      {
+        showPopup && (
+          <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg">
+            リストをコピーしました！
+          </div>
+        )
+      }
+    </div >
   )
 }

@@ -19,16 +19,16 @@ export async function PUT(
   }
 
   try {
-    const packingList = await prisma.packingList.findUnique({
+    const existingPackingList = await prisma.packingList.findUnique({
       where: { id: packingListId },
-      select: { userId: true },
+      include: { trips: true },
     });
 
-    if (!packingList) {
+    if (!existingPackingList) {
       return NextResponse.json({ error: 'Packing list not found' }, { status: 404 });
     }
 
-    if (packingList.userId !== session.user.id) {
+    if (existingPackingList.userId !== session.user.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
@@ -58,9 +58,14 @@ export async function PUT(
         })),
       });
 
-      // 更新されたパッキングリストを取得
-      return prisma.packingList.findUnique({
+      // パッキングリストを更新（旅程データを保持）
+      return prisma.packingList.update({
         where: { id: packingListId },
+        data: {
+          trips: {
+            connect: existingPackingList.trips.map(trip => ({ id: trip.id })),
+          },
+        },
         include: {
           items: {
             include: {
@@ -68,6 +73,7 @@ export async function PUT(
               personalGear: true,
             },
           },
+          trips: true,
         },
       });
     });

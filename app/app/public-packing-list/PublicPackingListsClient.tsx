@@ -158,7 +158,7 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
         <div className="flex-1 max-w-md ml-4">
           <input
             type="text"
-            placeholder="リスト名、ギア名、ブランド名等で検索..."
+            placeholder="使用ギア、ブランド名等"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full border rounded-md px-3 py-2"
@@ -240,14 +240,29 @@ export default function PublicPackingListsClient({ packingLists: initialPackingL
                     {list.items?.map((item) => (
                       <tr key={item.id}>
                         <td className="border p-2">
-                          {(item.gear?.img || item.personalGear?.img) && (
-                            <img
-                              src={(item.gear?.img ?? undefined) || (item.personalGear?.img ?? undefined)}
-                              alt={renderGearName(item)}
-                              className="w-8 h-8 object-cover mr-2 inline-block"
-                            />
+                          {item.gear ? (
+                            <Link href={`/gear/${item.gear.id}`}>
+                              {item.gear.img && (
+                                <img
+                                  src={item.gear.img}
+                                  alt={renderGearName(item)}
+                                  className="w-8 h-8 object-cover mr-2"
+                                />
+                              )}
+                              {renderGearName(item)}
+                            </Link>
+                          ) : (
+                            <div className="flex items-center">
+                              {item.personalGear?.img && (
+                                <img
+                                  src={item.personalGear.img}
+                                  alt={renderGearName(item)}
+                                  className="w-8 h-8 object-cover mr-2"
+                                />
+                              )}
+                              {renderGearName(item)}
+                            </div>
                           )}
-                          {renderGearName(item)}
                         </td>
                         <td className="border p-2">{renderGearWeight(item)}g</td>
                         <td className="border p-2">{item.quantity}個</td>

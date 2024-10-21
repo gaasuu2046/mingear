@@ -18,6 +18,7 @@ export interface Trip {
 }
 
 export interface Gear {
+  id: number;
   name: string;
   brand?: { name: string };
   img?: string | null;

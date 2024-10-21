@@ -53,11 +53,13 @@ export default async function GearDetail({ params }: { params: { id: string } })
             <div className="mt-6">
               <AddToPackingListButton gearId={gear.id} type="public" />
             </div>
-            <div className="mt-6">
-              <Link href={gear.productUrl || '#'} className="text-blue-500 hover:underline">
-                こちらで購入できます
-              </Link>
-            </div>
+            {gear.productUrl && (
+              <div className="mt-6">
+                <Link href={gear.productUrl} className="text-blue-500 hover:underline">
+                  関連リンク
+                </Link>
+              </div>
+            )}
             <div className="mt-6 flex items-center">
               <StarIcon className="text-yellow-400 h-5 w-5 flex-shrink-0" aria-hidden="true" />
               <p className="ml-2 text-sm text-gray-500">
